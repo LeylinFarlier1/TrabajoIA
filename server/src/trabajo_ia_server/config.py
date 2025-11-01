@@ -21,7 +21,7 @@ class Config:
 
     # Server Configuration
     SERVER_NAME: str = "trabajo-ia-server"
-    SERVER_VERSION: str = "0.1.0"
+    SERVER_VERSION: str = "0.1.8"
 
     # Logging Configuration
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
