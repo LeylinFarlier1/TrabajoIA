@@ -1358,31 +1358,24 @@ print("✓ All new tools verified")
 
 ## Future Enhancements
 
-Planned for v0.1.9 and beyond:
+Planned for v0.2.0 and beyond:
 
-### Additional Category Features
-- **Category series**: Get all series within a category
-- **Category hierarchy**: Full parent-child tree navigation
-- **Category search**: Text-based category discovery
-- **Category metadata**: Detailed category information
+### Performance & Infra
+- **Async HTTP pipeline** para ejecutar múltiples llamadas FRED en paralelo.
+- **Batch operations** que combinen múltiples series en un solo llamado MCP.
+- **Circuit breaker** para aislar fallas prolongadas del API de FRED.
 
-### Performance Improvements
-- Response caching for frequently accessed categories
-- Parallel request batching for multiple categories
-- Query optimization hints
-- Result set size optimization
+### Observabilidad
+- Exportación Prometheus/StatsD directa desde el servidor.
+- Dashboards de ejemplo para cache hit rate y penalizaciones del rate limiter.
 
-### Enhanced Features
-- Category comparison and similarity
-- Tag distribution analysis within categories
-- Automated category recommendation
-- Category-based series discovery workflows
+### Herramientas
+- Enriquecimiento de respuestas con estadísticas resumidas.
+- Nuevas operaciones de descubrimiento de categorías avanzadas.
 
-### Documentation
-- Interactive category navigation examples
-- Best practices for category exploration
-- Performance optimization guide for large categories
-- Category-based workflow tutorials
+### Documentación
+- Guías de mejores prácticas para configurar backends de caché distribuidos.
+- Playbooks de respuesta ante incidentes de rate limiting y fallas upstream.
 
 ---
 

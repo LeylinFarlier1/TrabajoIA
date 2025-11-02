@@ -4,13 +4,12 @@ A **Model Context Protocol (MCP)** server that provides comprehensive access to 
 
 ## Features
 
-### v0.1.2 - Latest (Performance Optimized)
-- **Lightning-Fast Search**: ~0.5s response time (10-60x faster than v0.1.1)
-- **AI-Optimized**: Default 20 results, compact JSON (~25% token reduction)
-- **Advanced Filtering**: Filter by categories, tags, frequency, units, and more
-- **Smart Retry**: Fast exponential backoff (3 attempts, 1-5s wait)
-- **Rate Limit Handling**: Intelligent detection and handling
-- **No Pagination**: Single fast request for top results
+### v0.1.9 - Observability, Cache & Resilience (Latest)
+- **Shared Cache Layer**: Multi-backend cache (in-memory, DiskCache, Redis) with per-tool TTL tuning to keep hot queries under 400 ms.
+- **Coordinated Rate Limiting**: Centralized backoff with penalty tracking to stay within FRED's 120 req/min budget while preserving throughput.
+- **Structured Telemetry**: JSON logging with request context IDs plus in-process Prometheus-ready metrics for cache hits, retries, and latency.
+- **Health Monitoring**: `system_health` MCP tool surfaces cache and rate-limiter status alongside metrics snapshots for automation hooks.
+- **User-Agent Consistency**: Unified configuration-driven headers across all tools for easier observability on the FRED side.
 
 ### Core Features
 - **FRED Data Access**: Fetch historical economic time-series data from FRED API
@@ -69,14 +68,15 @@ The server will start and listen for MCP protocol messages via stdio.
 
 ## Available Tools
 
-### 1. search_fred_series (v0.1.2 - Performance Optimized)
+### 1. search_fred_series (v0.1.9 - Cached & Optimized)
 
-Lightning-fast search for FRED economic data series with advanced filters.
+Lightning-fast, cache-aware search for FRED economic data series with advanced filters.
 
 **Performance:**
-- Response time: ~0.5 seconds
+- Response time: ~0.4 seconds on warm cache (~0.5s cold)
 - Optimized for AI/LLM consumption
 - Compact JSON output (saves ~25% tokens)
+- Integrates with shared cache and rate limiter to smooth bursts of queries
 
 **Parameters:**
 - `search_text` (string, required): Search query (e.g., "unemployment", "GDP")
@@ -125,6 +125,15 @@ JSON object containing data array and metadata
 ```python
 fetch_fred_series("GDP", "2020-01-01", "2023-12-31")
 ```
+
+### 3. system_health
+
+Expose operational status, cache and rate-limiter telemetry, and key metrics for automation or dashboards.
+
+**Returns:**
+- Cache backend, hit/miss counters, and namespace TTLs
+- Rate limiter windows, penalties, and last 429 timestamps
+- Recent latency and retry metrics gathered by the in-process registry
 
 ## Project Structure
 
