@@ -8,36 +8,17 @@ import logging
 from datetime import datetime
 from typing import Optional
 
-import requests
-from tenacity import retry, stop_after_attempt, wait_exponential
-
 from trabajo_ia_server.config import config
+from trabajo_ia_server.utils.fred_client import (
+    FredAPIError,
+    FredAPIResponse,
+    fred_client,
+)
 
 logger = logging.getLogger(__name__)
 
 # FRED API endpoint for category related
 FRED_CATEGORY_RELATED_URL = "https://api.stlouisfed.org/fred/category/related"
-
-
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=1, max=5),
-    reraise=True,
-)
-def _request_with_retries(url: str, params: dict) -> requests.Response:
-    """Make HTTP request with retry logic for transient failures."""
-    session = requests.Session()
-    try:
-        response = session.get(url, params=params, timeout=30)
-
-        if response.status_code == 429:
-            logger.warning("Rate limit hit, retrying...")
-            raise requests.exceptions.RequestException("Rate limit exceeded")
-
-        response.raise_for_status()
-        return response
-    finally:
-        session.close()
 
 
 def get_category_related(
@@ -127,8 +108,14 @@ def get_category_related(
         # 4. Log operation
         logger.info(f"Fetching related categories for category_id: {category_id}")
 
-        # 5. Make API request with retry
-        response = _request_with_retries(FRED_CATEGORY_RELATED_URL, params)
+        # 5. Make API request with retry and caching
+        ttl = config.get_cache_ttl("category_related", fallback=3600)
+        response: FredAPIResponse = fred_client.get_json(
+            FRED_CATEGORY_RELATED_URL,
+            params,
+            namespace="category_related",
+            ttl=ttl,
+        )
         json_data = response.json()
 
         # 6. Extract related categories data
@@ -144,6 +131,7 @@ def get_category_related(
                 "count": len(categories),
                 "realtime_start": json_data.get("realtime_start"),
                 "realtime_end": json_data.get("realtime_end"),
+                "cache_hit": response.from_cache,
             },
         }
 
@@ -164,20 +152,20 @@ def get_category_related(
         # 9. Return compact JSON (AI-optimized)
         return json.dumps(output, separators=(",", ":"), default=str)
 
-    except requests.exceptions.HTTPError as e:
-        # Handle HTTP errors
-        error_msg = f"FRED API error: {e.response.status_code}"
-
-        if e.response.status_code == 400:
-            try:
-                error_detail = e.response.json().get("error_message", "Bad request")
-                error_msg = f"Invalid parameters: {error_detail}"
-            except Exception:
-                error_msg = f"Invalid category_id: {category_id}"
-        elif e.response.status_code == 404:
+    except FredAPIError as e:
+        if e.status_code == 404:
             error_msg = f"Category not found: {category_id}"
-        elif e.response.status_code == 429:
+        elif e.status_code == 429:
             error_msg = "Rate limit exceeded. Please try again later."
+        elif e.status_code == 400 and e.payload:
+            detail = e.payload.get("error_message")
+            error_msg = (
+                f"Invalid parameters: {detail}"
+                if detail
+                else "Invalid category parameters provided"
+            )
+        else:
+            error_msg = f"FRED API error: {e.message}"
 
         logger.error(error_msg)
         return json.dumps({

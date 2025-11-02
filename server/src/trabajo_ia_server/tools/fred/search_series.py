@@ -5,66 +5,23 @@ Provides advanced search functionality for FRED economic data series with pagina
 filters, and comprehensive metadata.
 """
 import json
-import logging
-import time
 from datetime import datetime
 from typing import Dict, List, Optional, Any, Literal
-import requests
 from urllib.parse import urlencode
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from trabajo_ia_server.config import config
+from trabajo_ia_server.utils.fred_client import (
+    FredAPIError,
+    FredAPIResponse,
+    fred_client,
+)
 from trabajo_ia_server.utils.logger import setup_logger
 
 logger = setup_logger(__name__)
 
-# HTTP session for connection pooling
-_SESSION = requests.Session()
-_SESSION.headers.update({
-    'User-Agent': 'Trabajo-IA-MCP-Server/0.1.1',
-    'Accept': 'application/json'
-})
-
 # FRED API endpoints
 FRED_BASE_URL = "https://api.stlouisfed.org/fred"
 FRED_SEARCH_URL = f"{FRED_BASE_URL}/series/search"
-
-
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=1, max=5),
-    retry=retry_if_exception_type((requests.exceptions.RequestException, ValueError))
-)
-def _request_with_retries(url: str, params: Dict[str, Any]) -> requests.Response:
-    """
-    Make a request to FRED API with retries and rate limit handling.
-
-    Args:
-        url: FRED API endpoint URL
-        params: Query parameters including API key
-
-    Returns:
-        HTTP response object
-
-    Raises:
-        ValueError: If request fails or rate limit is hit
-    """
-    response = _SESSION.get(url, params=params, timeout=30)
-
-    if response.status_code == 429:  # Rate limited
-        reset_time = int(response.headers.get("X-RateLimit-Reset", time.time() + 60))
-        sleep_time = max(1, reset_time - time.time())
-        logger.warning(f"Rate limited. Sleeping for {sleep_time:.1f} seconds.")
-        time.sleep(sleep_time)
-        raise ValueError("Rate limit hit, retrying...")
-
-    if not response.ok:
-        raise ValueError(
-            f"FRED API request failed: {response.status_code} - {response.text}"
-        )
-
-    return response
-
 
 def search_fred_series(
     search_text: str,
@@ -161,7 +118,13 @@ def search_fred_series(
             f"Searching FRED series: '{search_text}' (limit={limit}, offset={offset})"
         )
 
-        response = _request_with_retries(FRED_SEARCH_URL, base_params)
+        ttl = config.get_cache_ttl("search_series", fallback=300)
+        response: FredAPIResponse = fred_client.get_json(
+            FRED_SEARCH_URL,
+            base_params,
+            namespace="search_series",
+            ttl=ttl,
+        )
         json_data = response.json()
 
         # Check for API errors
@@ -200,6 +163,7 @@ def search_fred_series(
                     "url": response.url,
                     "status_code": response.status_code,
                     "rate_limit_remaining": response.headers.get("X-RateLimit-Remaining"),
+                    "cache_hit": response.from_cache,
                 }
             }
         }
@@ -210,6 +174,27 @@ def search_fred_series(
 
         # Always return compact JSON for AI consumption (saves tokens)
         return json.dumps(output, separators=(",", ":"), default=str)
+
+    except FredAPIError as e:
+        if e.status_code == 429:
+            error_msg = "Rate limit exceeded. Please try again later."
+        elif e.status_code == 400 and e.payload:
+            detail = e.payload.get("error_message")
+            error_msg = (
+                f"Invalid search parameters: {detail}"
+                if detail
+                else "Invalid search parameters provided"
+            )
+        else:
+            error_msg = f"FRED API error: {e.message}"
+
+        logger.error(error_msg)
+        return json.dumps({
+            "error": error_msg,
+            "search_text": search_text,
+            "tool": "search_fred_series",
+            "metadata": {"fetch_date": datetime.utcnow().isoformat() + "Z"}
+        }, indent=2)
 
     except Exception as e:
         error_msg = f"Error searching FRED series with text '{search_text}': {str(e)}"

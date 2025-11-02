@@ -4,61 +4,21 @@ FRED Tags Discovery Tool.
 Provides functionality to discover and search FRED tags for better series filtering.
 """
 import json
-import logging
 from datetime import datetime
 from typing import Dict, List, Optional, Any, Literal
-import requests
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
-
 from trabajo_ia_server.config import config
+from trabajo_ia_server.utils.fred_client import (
+    FredAPIError,
+    FredAPIResponse,
+    fred_client,
+)
 from trabajo_ia_server.utils.logger import setup_logger
 
 logger = setup_logger(__name__)
 
-# HTTP session for connection pooling
-_SESSION = requests.Session()
-_SESSION.headers.update({
-    'User-Agent': 'Trabajo-IA-MCP-Server/0.1.3',
-    'Accept': 'application/json'
-})
-
 # FRED API endpoints
 FRED_BASE_URL = "https://api.stlouisfed.org/fred"
 FRED_TAGS_URL = f"{FRED_BASE_URL}/tags"
-
-
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=1, max=5),
-    retry=retry_if_exception_type((requests.exceptions.RequestException, ValueError))
-)
-def _request_with_retries(url: str, params: Dict[str, Any]) -> requests.Response:
-    """
-    Make a request to FRED API with retries and rate limit handling.
-
-    Args:
-        url: FRED API endpoint URL
-        params: Query parameters including API key
-
-    Returns:
-        HTTP response object
-
-    Raises:
-        ValueError: If request fails or rate limit is hit
-    """
-    response = _SESSION.get(url, params=params, timeout=30)
-
-    if response.status_code == 429:  # Rate limited
-        logger.warning("Rate limited by FRED API")
-        raise ValueError("Rate limit hit, retrying...")
-
-    if not response.ok:
-        raise ValueError(
-            f"FRED API request failed: {response.status_code} - {response.text}"
-        )
-
-    return response
-
 
 def get_fred_tags(
     search_text: Optional[str] = None,
@@ -134,7 +94,13 @@ def get_fred_tags(
             f"(search='{search_text}', group={tag_group_id}, limit={limit})"
         )
 
-        response = _request_with_retries(FRED_TAGS_URL, params)
+        ttl = config.get_cache_ttl("get_fred_tags", fallback=1800)
+        response: FredAPIResponse = fred_client.get_json(
+            FRED_TAGS_URL,
+            params,
+            namespace="get_fred_tags",
+            ttl=ttl,
+        )
         json_data = response.json()
 
         # Check for API errors
@@ -165,6 +131,7 @@ def get_fred_tags(
                     "url": response.url,
                     "status_code": response.status_code,
                     "rate_limit_remaining": response.headers.get("X-RateLimit-Remaining"),
+                    "cache_hit": response.from_cache,
                 }
             }
         }
@@ -176,6 +143,22 @@ def get_fred_tags(
 
         # Always return compact JSON for AI consumption (saves tokens)
         return json.dumps(output, separators=(",", ":"), default=str)
+
+    except FredAPIError as e:
+        if e.status_code == 429:
+            error_msg = "Rate limit exceeded. Please try again later."
+        elif e.status_code == 400 and e.payload:
+            detail = e.payload.get("error_message")
+            error_msg = f"Invalid parameters: {detail}" if detail else "Invalid parameters"
+        else:
+            error_msg = f"FRED API error: {e.message}"
+
+        logger.error(error_msg)
+        return json.dumps({
+            "error": error_msg,
+            "tool": "get_fred_tags",
+            "metadata": {"fetch_date": datetime.utcnow().isoformat() + "Z"}
+        }, separators=(",", ":"))
 
     except Exception as e:
         error_msg = f"Error fetching FRED tags: {str(e)}"

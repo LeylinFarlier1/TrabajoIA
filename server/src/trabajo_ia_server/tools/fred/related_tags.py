@@ -8,36 +8,17 @@ import logging
 from datetime import datetime
 from typing import Literal, Optional
 
-import requests
-from tenacity import retry, stop_after_attempt, wait_exponential
-
 from trabajo_ia_server.config import config
+from trabajo_ia_server.utils.fred_client import (
+    FredAPIError,
+    FredAPIResponse,
+    fred_client,
+)
 
 logger = logging.getLogger(__name__)
 
 # FRED API endpoint for related tags
 FRED_RELATED_TAGS_URL = "https://api.stlouisfed.org/fred/related_tags"
-
-
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=1, max=5),
-    reraise=True,
-)
-def _request_with_retries(url: str, params: dict) -> requests.Response:
-    """Make HTTP request with retry logic for transient failures."""
-    session = requests.Session()
-    try:
-        response = session.get(url, params=params, timeout=30)
-
-        if response.status_code == 429:
-            logger.warning("Rate limit hit, retrying...")
-            raise requests.exceptions.RequestException("Rate limit exceeded")
-
-        response.raise_for_status()
-        return response
-    finally:
-        session.close()
 
 
 def search_fred_related_tags(
@@ -164,8 +145,14 @@ def search_fred_related_tags(
             f"(group={tag_group_id}, search='{search_text}')"
         )
 
-        # Make API request
-        response = _request_with_retries(FRED_RELATED_TAGS_URL, params)
+        # Make API request with caching
+        ttl = config.get_cache_ttl("search_fred_related_tags", fallback=1800)
+        response: FredAPIResponse = fred_client.get_json(
+            FRED_RELATED_TAGS_URL,
+            params,
+            namespace="search_fred_related_tags",
+            ttl=ttl,
+        )
         json_data = response.json()
 
         # Extract tags data
@@ -189,6 +176,7 @@ def search_fred_related_tags(
                 "sort_order": sort_order,
                 "realtime_start": json_data.get("realtime_start"),
                 "realtime_end": json_data.get("realtime_end"),
+                "cache_hit": response.from_cache,
             },
         }
 
@@ -197,16 +185,14 @@ def search_fred_related_tags(
         # Return compact JSON (AI-optimized)
         return json.dumps(output, separators=(",", ":"), default=str)
 
-    except requests.exceptions.HTTPError as e:
-        error_msg = f"FRED API error: {e.response.status_code}"
-        if e.response.status_code == 400:
-            try:
-                error_detail = e.response.json().get("error_message", "Bad request")
-                error_msg = f"Invalid parameters: {error_detail}"
-            except Exception:
-                error_msg = "Invalid parameters provided"
-        elif e.response.status_code == 429:
+    except FredAPIError as e:
+        if e.status_code == 429:
             error_msg = "Rate limit exceeded. Please try again later."
+        elif e.status_code == 400 and e.payload:
+            detail = e.payload.get("error_message")
+            error_msg = f"Invalid parameters: {detail}" if detail else "Invalid parameters provided"
+        else:
+            error_msg = f"FRED API error: {e.message}"
 
         logger.error(error_msg)
         return json.dumps({
