@@ -1,16 +1,47 @@
-"""
-Configuration module for Trabajo IA Server.
+"""Configuration module for Trabajo IA Server."""
+from __future__ import annotations
 
-Manages environment variables and server configuration.
-"""
 import os
 from pathlib import Path
 from typing import Dict, Optional, Tuple
-from dotenv import load_dotenv
 
-# Load environment variables from .env file
+
+def _load_env_file(dotenv_path: Path) -> None:
+    """Best-effort loader for ``.env`` files when ``python-dotenv`` is missing.
+
+    The production dependency list still includes ``python-dotenv``.  However,
+    our test environment stubs optional dependencies to keep unit tests
+    lightweight.  Importing :mod:`python-dotenv` in that context would raise an
+    :class:`ImportError`, so we provide this tiny fallback that mirrors the
+    subset of functionality we rely on (simple ``KEY=VALUE`` assignments).
+    """
+
+    if not dotenv_path.exists():
+        return
+
+    for line in dotenv_path.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+
+        if "=" not in stripped:
+            continue
+
+        key, value = stripped.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip("\"'")
+
+        os.environ.setdefault(key, value)
+
+
 env_path = Path(__file__).parent.parent.parent / ".env"
-load_dotenv(dotenv_path=env_path)
+
+try:  # pragma: no cover - executed only when dependency is available
+    from dotenv import load_dotenv
+
+    load_dotenv(dotenv_path=env_path)
+except Exception:  # pragma: no cover - executed in lightweight test envs
+    _load_env_file(env_path)
 
 
 def _str_to_bool(value: Optional[str], default: bool = True) -> bool:
