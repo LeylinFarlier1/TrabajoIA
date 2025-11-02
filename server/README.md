@@ -80,13 +80,16 @@ Lightning-fast, cache-aware search for FRED economic data series with advanced f
 
 **Parameters:**
 - `search_text` (string, required): Search query (e.g., "unemployment", "GDP")
-- `limit` (int, optional): Max results (1-1000, default: **20** - optimal for AI)
+- `limit` (int, optional): Max results (1-100, default: **20** - optimal for AI)
+  - ⚠️ **Important:** Capped at 100 to prevent MCP token overflow
+  - Requests > 100 are automatically clamped for safety
 - `offset` (int, optional): Starting offset for pagination (default: 0)
 - `search_type` (string, optional): "full_text" or "series_id" (default: "full_text")
 - `filter_variable` (string, optional): Filter by metadata (e.g., "frequency", "units")
 - `filter_value` (string, optional): Value for filter (e.g., "Monthly", "Percent")
 - `tag_names` (string, optional): Include tags, **semicolon-delimited** (e.g., "usa;nsa")
 - `exclude_tag_names` (string, optional): Exclude tags, semicolon-delimited
+  - ⚠️ **Requires `tag_names`** to be set (FRED API requirement)
 - `order_by` (string, optional): Sort field (default: "popularity")
   - Options: "popularity", "search_rank", "title", "units", "last_updated"
 - `sort_order` (string, optional): "asc" or "desc" (default: "desc")

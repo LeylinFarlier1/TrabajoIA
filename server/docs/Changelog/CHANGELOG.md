@@ -27,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **[BUG-001 CRITICAL]** Fixed token overflow in `search_fred_series` when limit > 100 by clamping maximum to 100 and adding
+  validation with warning logs. Previously, limit=1000 could produce 254,230 token responses, exceeding MCP's 25k limit and
+  causing critical server disconnections.
 - Hardened JSON parsing and error surfaces across the shared client so upstream API failures generate structured responses
   without leaking transport exceptions to MCP callers.
 
