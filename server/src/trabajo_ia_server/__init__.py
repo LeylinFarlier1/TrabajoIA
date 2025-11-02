@@ -1,11 +1,14 @@
-"""
-Trabajo IA MCP Server.
+"""Trabajo IA MCP Server package exports."""
 
-A Model Context Protocol (MCP) server for accessing FRED economic data.
-"""
-__version__ = "0.1.8"
+__version__ = "0.1.9-alpha"
 __author__ = "Trabajo IA Team"
 
-from trabajo_ia_server.server import mcp, main
-
 __all__ = ["mcp", "main", "__version__"]
+
+
+def __getattr__(name: str):  # pragma: no cover - thin forwarding logic
+    if name in {"mcp", "main"}:
+        from trabajo_ia_server import server as _server
+
+        return getattr(_server, name)
+    raise AttributeError(f"module 'trabajo_ia_server' has no attribute '{name}'")
