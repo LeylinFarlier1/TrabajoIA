@@ -12,7 +12,9 @@ from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponen
 
 from trabajo_ia_server.config import config
 from trabajo_ia_server.utils.cache import cache_manager
+from trabajo_ia_server.utils.rate_limiter import rate_limiter as shared_rate_limiter
 from trabajo_ia_server.utils.logger import setup_logger
+from trabajo_ia_server.utils.metrics import metrics
 
 logger = setup_logger(__name__)
 
@@ -82,6 +84,7 @@ class FredClient:
         cache=cache_manager,
         timeout: float = 30.0,
         max_attempts: int = 3,
+        rate_limiter=shared_rate_limiter,
     ) -> None:
         self._session = requests.Session()
         self._session.headers.update(
@@ -93,6 +96,7 @@ class FredClient:
         self._timeout = timeout
         self._cache = cache
         self._max_attempts = max_attempts
+        self._rate_limiter = rate_limiter
 
     @staticmethod
     def _build_cache_key(url: str, params: Mapping[str, Any]) -> str:
@@ -116,6 +120,9 @@ class FredClient:
         reraise=True,
     )
     def _request_with_retries(self, url: str, params: Mapping[str, Any]) -> requests.Response:
+        if self._rate_limiter is not None:
+            self._rate_limiter.acquire()
+
         response = self._session.get(url, params=params, timeout=self._timeout)
 
         if response.status_code == 429:
@@ -125,11 +132,21 @@ class FredClient:
                     reset_time = float(reset_header)
                     delay = max(1.0, reset_time - time.time())
                     logger.warning("FRED rate limit hit. Sleeping for %.1f seconds", delay)
+                    if self._rate_limiter is not None:
+                        self._rate_limiter.register_penalty(delay)
                     time.sleep(delay)
                 except ValueError:
                     logger.warning("FRED rate limit hit. Retrying without delay")
+                    penalty = config.get_rate_limit_penalty()
+                    if self._rate_limiter is not None:
+                        self._rate_limiter.register_penalty(penalty)
+                    time.sleep(penalty)
             else:
                 logger.warning("FRED rate limit hit. Retrying")
+                if self._rate_limiter is not None:
+                    penalty = config.get_rate_limit_penalty()
+                    self._rate_limiter.register_penalty(penalty)
+                    time.sleep(penalty)
             raise FredAPIError(
                 "Rate limit exceeded",
                 status_code=429,
@@ -158,12 +175,31 @@ class FredClient:
     ) -> FredAPIResponse:
         cache_key = self._build_cache_key(url, params)
 
+        labels = {"namespace": namespace}
         cached_value, hit = self._cache.get(namespace, cache_key)
         if hit and isinstance(cached_value, FredAPIResponse):
+            metrics.increment("fred_cache_hits_total", labels=labels)
             logger.debug("Cache hit for namespace '%s' and key '%s'", namespace, cache_key)
             return cached_value.as_cache_hit()
 
-        response = self._request_with_retries(url, params)
+        metrics.increment("fred_cache_misses_total", labels=labels)
+
+        metrics.increment("fred_http_attempts_total", labels=labels)
+        start = time.perf_counter()
+        try:
+            response = self._request_with_retries(url, params)
+        except FredAPIError as exc:
+            status_label = str(exc.status_code or "error")
+            metrics.increment("fred_http_errors_total", labels={**labels, "status": status_label})
+            if exc.status_code == 429:
+                metrics.increment("fred_http_rate_limit_total", labels=labels)
+            raise
+        except Exception:
+            metrics.increment("fred_http_errors_total", labels={**labels, "status": "exception"})
+            raise
+        finally:
+            duration = time.perf_counter() - start
+            metrics.observe("fred_http_latency_seconds", duration, labels=labels)
 
         try:
             payload = response.json()
@@ -173,6 +209,11 @@ class FredClient:
                 status_code=response.status_code,
                 url=response.url,
             ) from exc
+
+        metrics.increment(
+            "fred_http_requests_total",
+            labels={**labels, "status": str(response.status_code)},
+        )
 
         if not response.ok:
             error_message = "FRED API request failed"
@@ -201,6 +242,7 @@ class FredClient:
                 logger.debug(
                     "Stored response in cache (namespace=%s, ttl=%s)", namespace, ttl
                 )
+                metrics.increment("fred_cache_store_total", labels=labels)
 
         return api_response
 

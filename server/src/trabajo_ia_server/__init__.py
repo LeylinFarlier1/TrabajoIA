@@ -1,6 +1,6 @@
 """Trabajo IA MCP Server package exports."""
 
-__version__ = "0.1.9-alpha"
+__version__ = "0.1.9"
 __author__ = "Trabajo IA Team"
 
 __all__ = ["mcp", "main", "__version__"]

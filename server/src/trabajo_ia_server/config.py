@@ -1,16 +1,47 @@
-"""
-Configuration module for Trabajo IA Server.
+"""Configuration module for Trabajo IA Server."""
+from __future__ import annotations
 
-Manages environment variables and server configuration.
-"""
 import os
 from pathlib import Path
-from typing import Dict, Optional
-from dotenv import load_dotenv
+from typing import Dict, Optional, Tuple
 
-# Load environment variables from .env file
+
+def _load_env_file(dotenv_path: Path) -> None:
+    """Best-effort loader for ``.env`` files when ``python-dotenv`` is missing.
+
+    The production dependency list still includes ``python-dotenv``.  However,
+    our test environment stubs optional dependencies to keep unit tests
+    lightweight.  Importing :mod:`python-dotenv` in that context would raise an
+    :class:`ImportError`, so we provide this tiny fallback that mirrors the
+    subset of functionality we rely on (simple ``KEY=VALUE`` assignments).
+    """
+
+    if not dotenv_path.exists():
+        return
+
+    for line in dotenv_path.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+
+        if "=" not in stripped:
+            continue
+
+        key, value = stripped.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip("\"'")
+
+        os.environ.setdefault(key, value)
+
+
 env_path = Path(__file__).parent.parent.parent / ".env"
-load_dotenv(dotenv_path=env_path)
+
+try:  # pragma: no cover - executed only when dependency is available
+    from dotenv import load_dotenv
+
+    load_dotenv(dotenv_path=env_path)
+except Exception:  # pragma: no cover - executed in lightweight test envs
+    _load_env_file(env_path)
 
 
 def _str_to_bool(value: Optional[str], default: bool = True) -> bool:
@@ -36,15 +67,31 @@ class Config:
 
     # Server Configuration
     SERVER_NAME: str = "trabajo-ia-server"
-    SERVER_VERSION: str = "0.1.9-alpha"
+    SERVER_VERSION: str = "0.1.9"
 
     # Logging Configuration
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
+    LOG_FORMAT: str = os.getenv("LOG_FORMAT", "plain")
+    LOG_JSON_INDENT: Optional[int] = None
+    try:
+        _indent_value = os.getenv("LOG_JSON_INDENT")
+        if _indent_value is not None:
+            LOG_JSON_INDENT = max(0, int(_indent_value))
+    except (TypeError, ValueError):
+        LOG_JSON_INDENT = None
 
     # Cache configuration
     CACHE_ENABLED: bool = _str_to_bool(os.getenv("CACHE_ENABLED"), default=True)
     CACHE_BACKEND: str = os.getenv("CACHE_BACKEND", "memory")
-    CACHE_DEFAULT_TTL_SECONDS: int = max(0, _safe_int(os.getenv("CACHE_DEFAULT_TTL_SECONDS"), 300))
+    CACHE_DEFAULT_TTL_SECONDS: int = max(
+        0, _safe_int(os.getenv("CACHE_DEFAULT_TTL_SECONDS"), 300)
+    )
+    CACHE_DISKCACHE_DIRECTORY: str = os.getenv(
+        "CACHE_DISKCACHE_DIRECTORY",
+        str(Path(__file__).parent.parent.parent / ".cache" / "trabajo_ia"),
+    )
+    CACHE_REDIS_URL: str = os.getenv("CACHE_REDIS_URL", "redis://localhost:6379/0")
+    CACHE_REDIS_PREFIX: str = os.getenv("CACHE_REDIS_PREFIX", "trabajo-ia")
     CACHE_NAMESPACE_DEFAULTS: Dict[str, Optional[int]] = {
         "search_series": 300,
         "search_series_tags": 300,
@@ -62,6 +109,24 @@ class Config:
         "category_related_tags": 1800,
         "observations": 900,
     }
+
+    # Coordinated FRED rate limit configuration
+    FRED_RATE_LIMIT_ENABLED: bool = _str_to_bool(
+        os.getenv("FRED_RATE_LIMIT_ENABLED"), default=True
+    )
+    FRED_RATE_LIMIT_PER_SECOND: int = max(
+        0, _safe_int(os.getenv("FRED_RATE_LIMIT_PER_SECOND"), 10)
+    )
+    FRED_RATE_LIMIT_PER_MINUTE: int = max(
+        0, _safe_int(os.getenv("FRED_RATE_LIMIT_PER_MINUTE"), 120)
+    )
+    FRED_RATE_LIMIT_DEFAULT_RETRY_SECONDS: int = max(
+        1, _safe_int(os.getenv("FRED_RATE_LIMIT_DEFAULT_RETRY_SECONDS"), 5)
+    )
+
+    # Metrics configuration
+    METRICS_ENABLED: bool = _str_to_bool(os.getenv("METRICS_ENABLED"), default=True)
+    METRICS_EXPORT_FORMAT: str = os.getenv("METRICS_EXPORT_FORMAT", "json")
 
     @classmethod
     def validate(cls) -> None:
@@ -106,6 +171,25 @@ class Config:
         if default is None or default <= 0:
             return None
         return default
+
+    @classmethod
+    def get_rate_limits(cls) -> Tuple[Optional[int], Optional[int]]:
+        """Return the configured per-second and per-minute FRED request limits."""
+
+        if not cls.FRED_RATE_LIMIT_ENABLED:
+            return None, None
+
+        per_second = cls.FRED_RATE_LIMIT_PER_SECOND or None
+        per_minute = cls.FRED_RATE_LIMIT_PER_MINUTE or None
+        return per_second, per_minute
+
+    @classmethod
+    def get_rate_limit_penalty(cls, fallback: Optional[float] = None) -> float:
+        """Return the default backoff seconds when FRED rate limits are triggered."""
+
+        if fallback is not None and fallback > 0:
+            return fallback
+        return float(max(1, cls.FRED_RATE_LIMIT_DEFAULT_RETRY_SECONDS))
 
 
 # Singleton instance

@@ -47,4 +47,10 @@ def pytest_sessionstart(session):  # pragma: no cover - pytest hook
         sys.modules["tenacity"] = tenacity_stub
 
     if "dotenv" not in sys.modules:
-        from dotenv import load_dotenv  # noqa: F401 - ensure fallback module is registered
+        dotenv_stub = types.ModuleType("dotenv")
+
+        def load_dotenv(*args, **kwargs):  # pragma: no cover - simple placeholder
+            return False
+
+        dotenv_stub.load_dotenv = load_dotenv
+        sys.modules["dotenv"] = dotenv_stub
