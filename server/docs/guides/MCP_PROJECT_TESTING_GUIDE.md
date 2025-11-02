@@ -10,7 +10,7 @@
 
 1. [Introducción al Proyecto](#1-introducción-al-proyecto)
 2. [Arquitectura MCP y Estructura](#2-arquitectura-mcp-y-estructura)
-3. [Las 14 Herramientas FRED Disponibles](#3-las-14-herramientas-fred-disponibles)
+3. [Herramientas Disponibles (v0.1.9)](#3-herramientas-disponibles-v019)
 4. [Cómo Funcionan las Herramientas](#4-cómo-funcionan-las-herramientas)
 5. [Generando Prompts de Prueba Individual](#5-generando-prompts-de-prueba-individual)
 6. [Diseñando Workflows Multi-Herramienta](#6-diseñando-workflows-multi-herramienta)
@@ -43,7 +43,7 @@
 #### Tools (Herramientas)
 - **Funciones** que el LLM puede llamar para obtener datos
 - Cada tool hace una **tarea específica** (buscar, filtrar, obtener datos)
-- 14 tools disponibles en este proyecto (v0.1.8)
+- 15 tools disponibles en este proyecto (v0.1.9): 14 FRED tools + 1 tool de salud del sistema
 
 ---
 
@@ -93,7 +93,7 @@ server/
 │   ├── server.py                    # 🔧 Servidor MCP (registra tools)
 │   ├── config.py                    # ⚙️  Configuración (API key, etc.)
 │   ├── tools/fred/                  # 🛠️  Implementaciones de herramientas
-│   │   ├── __init__.py             # Exports de las 14 tools
+│   │   ├── __init__.py             # Exports de las 15 tools registradas
 │   │   ├── search_series.py        # Tool 1: Búsqueda de series
 │   │   ├── get_tags.py             # Tool 2: Obtener tags
 │   │   ├── related_tags.py         # Tool 3: Tags relacionados
@@ -125,7 +125,7 @@ server/
 
 ---
 
-## 3. Las 14 Herramientas FRED Disponibles
+## 3. Herramientas Disponibles (v0.1.9)
 
 ### Clasificación por Función
 
@@ -163,6 +163,12 @@ server/
 | 13 | `get_fred_category_tags` | Tags en categoría | Category ID | Tags usados en esa categoría |
 | 14 | `get_fred_category_related_tags` | Tags relacionados en categoría | Category ID + tags | Tags relacionados en contexto |
 
+#### 🩺 **Categoría 5: Operaciones y Salud del Sistema**
+
+| # | Tool | Función | Input Principal | Output |
+|---|------|---------|-----------------|--------|
+| 15 | `system_health` | Telemetría y estado operativo | Ninguno | Resumen de cache, rate limiter y métricas |
+
 ### Versiones y Disponibilidad
 
 | Tool | Añadida en Versión | Estado |
@@ -172,7 +178,8 @@ server/
 | 5 | v0.1.5 | ✅ Estable |
 | 6 | v0.1.6 | ✅ Estable |
 | 7-10 | v0.1.7 | ✅ Estable |
-| 11-14 | v0.1.8 | ✅ Estable (Actual) |
+| 11-14 | v0.1.8 | ✅ Estable |
+| 15 | v0.1.9 | ✅ Estable (Actual) |
 
 ---
 
@@ -484,6 +491,28 @@ En categoría 125:
 - Pero excluye tags relacionados con "annual"
 - Solo muestra tags del grupo "src" (fuente)
 ```
+
+---
+
+#### Tool 15: `system_health` (Salud Operativa)
+
+**Prompt Básico:**
+```
+Ejecuta la tool `system_health` y devuelve el resultado tal cual.
+```
+
+**Prompt de Diagnóstico:**
+```
+Consulta `system_health` y verifica:
+- ¿Qué backend de caché está activo?
+- ¿Hay penalizaciones activas en el rate limiter?
+- ¿Cuál es la latencia p95 reportada por el cliente FRED?
+```
+
+**Tips de prueba:**
+- Útil como "heartbeat" en pipelines automatizados antes de ejecutar workflows más costosos.
+- Permite validar que Redis o DiskCache están conectados antes de realizar cargas masivas.
+- Exponer el resultado a tus dashboards ayuda a detectar cambios en tasa de aciertos de caché o reintentos.
 
 ---
 
@@ -1164,7 +1193,7 @@ pytest tests/
 Esta guía te proporciona:
 
 ✅ **Comprensión completa** del proyecto MCP Trabajo IA Server  
-✅ **14 herramientas FRED** clasificadas y explicadas  
+✅ **14 herramientas FRED + 1 herramienta de salud** clasificadas y explicadas
 ✅ **Templates de prompts** para pruebas individuales  
 ✅ **5 workflows completos** listos para usar  
 ✅ **Patrones de diseño** para crear tus propios workflows  

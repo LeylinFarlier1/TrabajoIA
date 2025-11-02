@@ -8,7 +8,7 @@ New to the project? Start here:
 
 1. **[Main README](../README.md)** - Project overview, installation, and basic usage
 2. **[Architecture Guide](architecture.md)** - System design and architecture
-3. **[Migration Guide](guides/MIGRATION_GUIDE.md)** - Upgrading from older versions
+3. **[Version Update Guide](guides/VERSION_UPDATE_GUIDE.md)** - Step-by-step release checklist
 
 ## 📖 Core Documentation
 
@@ -26,8 +26,8 @@ New to the project? Start here:
   - Breaking changes and migrations
   - Upgrade guides
 
-- **[RELEASE_NOTES_v0.1.1.md](../RELEASE_NOTES_v0.1.1.md)** - Latest release details
-  - What's new in v0.1.1
+- **[RELEASE_NOTES_v0.1.9.md](Release_notes/RELEASE_NOTES_v0.1.9.md)** - Latest release details
+  - What's new in v0.1.9: cache, rate limiting, telemetry, and system health tool
   - Usage examples
   - Performance metrics
   - Migration instructions
@@ -59,32 +59,41 @@ Comprehensive architecture documentation covering:
 
 Located in `docs/guides/`:
 
-### [MIGRATION_GUIDE.md](guides/MIGRATION_GUIDE.md)
-Step-by-step migration instructions:
-- From v0.1.0 to v0.1.1
-- File mapping (old → new)
-- Code changes required
-- Import updates
-- Configuration changes
-- Troubleshooting common issues
+### [VERSION_UPDATE_GUIDE.md](guides/VERSION_UPDATE_GUIDE.md)
+Step-by-step release instructions:
+- Version consistency checklist
+- Required documentation updates
+- Testing and verification workflow
+- Semantic versioning guidance
 
 **Use this when:**
-- Upgrading to a new version
-- Adapting custom code
-- Understanding structural changes
+- Preparing a new release
+- Auditing documentation coverage
+- Coordinating handoff between contributors
 
-### [REORGANIZATION_SUMMARY.md](guides/REORGANIZATION_SUMMARY.md)
-Complete reorganization documentation:
-- Before/after structure comparison
-- All files created/modified
-- Improvements implemented
-- Verification steps
-- Impact analysis
+### [MCP_PROJECT_TESTING_GUIDE.md](guides/MCP_PROJECT_TESTING_GUIDE.md)
+Comprehensive testing and prompting playbook:
+- Architecture refresher and tool catalog
+- Prompt templates for unit and workflow tests
+- Troubleshooting guidance for common issues
+- Recommended validation workflows
 
 **Use this to:**
-- Understand the project restructuring
-- Review organizational decisions
-- Track all changes made during reorganization
+- Design structured QA prompts
+- Understand MCP request flows
+- Align on testing expectations across teams
+
+### [IMPLEMENTACION_NUEVA_TOOL_GUIA.md](guides/IMPLEMENTACION_NUEVA_TOOL_GUIA.md)
+How-to guide for adding a new MCP tool:
+- Environment setup checklist
+- Template for tool scaffolding
+- Validation and logging patterns
+- Publishing and documentation steps
+
+**Use this to:**
+- Prototype new FRED integrations
+- Ensure new tools follow project conventions
+- Share onboarding material with new contributors
 
 ## 🔧 API Reference
 
@@ -112,6 +121,13 @@ Fetch historical observations:
 
 **See**: [README - fetch_fred_series](../README.md#2-fetch_fred_series)
 
+#### 3. system_health
+**Location**: `src/trabajo_ia_server/tools/system/health.py`
+
+Telemetry snapshot for cache, rate limiter, and metrics subsystems.
+
+**See**: [README - system_health](../README.md#3-system_health)
+
 ## 🧪 Testing
 
 ### Test Documentation
@@ -138,7 +154,7 @@ pytest tests/unit/tools/test_fred_search.py
 server/
 ├── README.md                          # Main documentation
 ├── CHANGELOG.md                       # Version history
-├── RELEASE_NOTES_v0.1.1.md           # Latest release
+├── Release_notes/RELEASE_NOTES_v0.1.9.md # Latest release
 │
 └── docs/                              # Documentation folder
     ├── README.md                      # This file
@@ -148,8 +164,9 @@ server/
     │   └── (To be added)
     │
     └── guides/                        # How-to guides
-        ├── MIGRATION_GUIDE.md         # Version migration
-        └── REORGANIZATION_SUMMARY.md  # Project reorganization
+        ├── VERSION_UPDATE_GUIDE.md           # Release checklist
+        ├── MCP_PROJECT_TESTING_GUIDE.md      # Prompting & QA playbook
+        └── IMPLEMENTACION_NUEVA_TOOL_GUIA.md # New tool workflow
 ```
 
 ## 🎯 Documentation by Use Case
@@ -162,11 +179,11 @@ server/
 #### Understand the architecture
 → Read [architecture.md](architecture.md)
 
-#### Upgrade from v0.1.0
-→ Follow [MIGRATION_GUIDE.md](guides/MIGRATION_GUIDE.md)
+#### Prepare a release
+→ Review [VERSION_UPDATE_GUIDE.md](guides/VERSION_UPDATE_GUIDE.md)
 
-#### See what's new in v0.1.1
-→ Check [RELEASE_NOTES_v0.1.1.md](../RELEASE_NOTES_v0.1.1.md)
+#### See what's new in v0.1.9
+→ Check [RELEASE_NOTES_v0.1.9.md](Release_notes/RELEASE_NOTES_v0.1.9.md)
 
 #### Use the search tool
 → See examples in [README - search_fred_series](../README.md#1-search_fred_series-new-in-v011)
@@ -178,7 +195,7 @@ server/
 → Read [CHANGELOG.md](../CHANGELOG.md)
 
 #### Understand project structure
-→ See [REORGANIZATION_SUMMARY.md](guides/REORGANIZATION_SUMMARY.md)
+→ See [architecture.md](architecture.md#project-structure)
 
 ## 🔄 Documentation Standards
 

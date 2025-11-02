@@ -5,6 +5,33 @@ All notable changes to Trabajo IA MCP Server will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.9] - 2025-11-02
+
+### Added - Cache, Telemetry, and Resilience Enhancements
+
+- **Unified Cache Layer** with pluggable backends (in-memory, DiskCache, Redis) and per-namespace TTLs to keep the hottest FRED
+  queries below 400 ms while respecting freshness requirements.
+- **Coordinated Rate Limiter** that centralizes retry penalties and protects the shared FRED quota when bursts or 429 responses
+  occur.
+- **Structured Logging & Metrics** featuring JSON log output, request context helpers, and an in-process Prometheus-style
+  registry that tracks cache hits, retries, latency, and limiter activity.
+- **`system_health` MCP Tool** exposing cache configuration, limiter state, and the most recent telemetry snapshot for
+  automation hooks and dashboards.
+
+### Changed
+
+- All FRED tools now delegate to the shared `FredClient`, ensuring consistent headers, retry handling, and cache metadata in
+  responses.
+- Configuration bootstrapping no longer depends on a vendored dotenv shim; runtime and tests share a lightweight inline
+  fallback for optional dependency gaps.
+
+### Fixed
+
+- Hardened JSON parsing and error surfaces across the shared client so upstream API failures generate structured responses
+  without leaking transport exceptions to MCP callers.
+
+---
+
 ## [0.1.8] - 2025-11-01
 
 ### Added - Three Category Discovery Tools for Enhanced Data Navigation
@@ -1055,16 +1082,15 @@ search_fred_series("unemployment", tag_names="nsa,usa")
 ## Future Roadmap
 
 ### Planned for 0.2.0
-- `get_series_info` - Detailed metadata for a specific series
-- `get_series_categories` - Category information
-- `get_series_tags` - Tag information
-- Caching layer for frequently accessed data
-- Async support for concurrent requests
+- Async HTTP pipeline built on `httpx.AsyncClient`
+- Batch operations tool for grouped series fetches
+- Circuit breaker integration layered on top of rate limiter
+- Metrics exporter for Prometheus/StatsD
 
 ### Planned for 0.3.0
-- Series comparison tools
+- Series comparison helpers and statistical summaries
 - Data transformation utilities
-- Export to multiple formats (CSV, Excel)
+- Export to multiple formats (CSV, Parquet, Excel)
 - Visualization helpers
 
 ### Long-term Goals
