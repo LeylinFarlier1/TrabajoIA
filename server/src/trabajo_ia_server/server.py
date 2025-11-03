@@ -23,6 +23,7 @@ from trabajo_ia_server.tools.fred.category_related import get_category_related
 from trabajo_ia_server.tools.fred.category_series import get_category_series
 from trabajo_ia_server.tools.fred.category_tags import get_category_tags
 from trabajo_ia_server.tools.fred.category_related_tags import get_category_related_tags
+from trabajo_ia_server.workflows.compare_inflation import compare_inflation_across_regions
 from trabajo_ia_server.utils.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -1020,6 +1021,198 @@ def get_related_tags_for_category(
         offset=offset,
         order_by=order_by,
         sort_order=sort_order,
+    )
+
+
+# =============================================================================
+# v0.2.0 WORKFLOW TOOLS - Complete End-to-End Analysis
+# =============================================================================
+
+
+@mcp.tool("compare_inflation_across_regions")
+def compare_inflation_workflow(
+    regions: list,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    metric: Literal["latest", "trend", "all"] = "latest",
+) -> str:
+    """
+    Compare inflation rates across multiple countries/regions.
+
+    Complete v0.2.0 workflow implementing OECD/IMF/Eurostat best practices for
+    cross-country inflation comparisons. Uses HICP (harmonized) for Europe,
+    national CPI for others. Analyzes distance from central bank targets and
+    detects methodological differences.
+
+    **Best Practices Implemented:**
+    - HICP prioritized for European countries (harmonized, comparable)
+    - Year-over-year % change (eliminates seasonality)
+    - Central bank inflation target analysis
+    - Comparability warnings (housing methodology, etc.)
+    - Base effects detection (temporary measures unwinding)
+
+    Args:
+        regions: List of region codes or preset names.
+            Individual countries: ["usa", "euro_area", "uk", "japan", "canada", ...]
+            Presets: ["g7"], ["brics"], ["north_america"], ["eurozone_core"], etc.
+            Can mix: ["g7", "china"] → expands to G7 countries + China
+            Maximum: 5 regions for MVP v0.2.0 (performance constraint)
+        start_date: Start date for comparison period (YYYY-MM-DD).
+                   Default: Last 5 years
+        end_date: End date for comparison period (YYYY-MM-DD).
+                 Default: Latest available data
+        metric: Analysis focus:
+            - "latest": Latest snapshot, ranking, target analysis (default)
+            - "trend": Trend analysis (direction, velocity)
+            - "all": All of the above
+
+    Returns:
+        Compact JSON with:
+        - comparison: Inflation rates, rankings, target analysis, trends
+        - metadata: Series used (CPI vs HICP), methodological notes
+        - comparability_warnings: Important differences (housing, quality adjustments, etc.)
+        - limitations: What this analysis does NOT do
+        - suggestions: Interpretation guidance
+
+    Response Format:
+        {
+            "tool": "compare_inflation_across_regions",
+            "comparison": {
+                "regions": ["usa", "euro_area", "uk"],
+                "period": "2020-01-01 to 2025-11-01",
+                "latest_snapshot": {
+                    "date": "2025-10-01",
+                    "ranking": [
+                        {
+                            "region": "euro_area",
+                            "value": 2.22,
+                            "rank": 1,
+                            "target": 2.0,
+                            "distance_from_target": 0.22,
+                            "target_measure": "HICP YoY"
+                        },
+                        ...
+                    ]
+                },
+                "analysis": {
+                    "highest": {...},
+                    "lowest": {...},
+                    "spread": 0.80,
+                    "convergence": "regions converging (CV decreased...)"
+                },
+                "target_analysis": {
+                    "regions_above_target": ["usa"],
+                    "regions_at_target": ["euro_area", "uk"],
+                    "regions_below_target": [],
+                    "sticky_inflation": ["usa"],  # >3% for 6+ months
+                    "interpretation": "..."
+                },
+                "trends": {...},
+                "time_series": [...]
+            },
+            "metadata": {
+                "transformation": "Year-over-year % change (pc1)",
+                "series_used": [
+                    {
+                        "region": "usa",
+                        "series_id": "CPIAUCSL",
+                        "index_type": "CPI",
+                        "includes_owner_housing": true,
+                        "methodological_notes": "CPI-U includes owner-occupied housing via OER (~24% of basket)..."
+                    },
+                    {
+                        "region": "euro_area",
+                        "series_id": "CP0000EZ19M086NEST",
+                        "index_type": "HICP",
+                        "includes_owner_housing": false,
+                        "methodological_notes": "HICP EXCLUDES owner-occupied housing..."
+                    },
+                    ...
+                ]
+            },
+            "comparability_warnings": [
+                "Mixed index types: CPI, HICP. HICP excludes owner-occupied housing...",
+                "Canada includes mortgage interest costs (unique methodology)...",
+                ...
+            ],
+            "limitations": [
+                "HICP (Europe) excludes owner-occupied housing; CPI (others) includes it",
+                "No PPP adjustment - nominal comparison only",
+                "No core/headline decomposition",
+                ...
+            ],
+            "suggestions": [
+                "Small differences (<0.5pp) often reflect measurement differences",
+                "For European countries, HICP is harmonized and most comparable",
+                "Check 'comparability_warnings' for methodological differences",
+                ...
+            ]
+        }
+
+    Examples:
+        # Basic G7 inflation comparison
+        >>> compare_inflation_workflow(["g7"])
+
+        # Euro area core vs periphery
+        >>> compare_inflation_workflow(["eurozone_core", "eurozone_periphery"], metric="all")
+
+        # North America with trend analysis
+        >>> compare_inflation_workflow(
+        ...     ["usa", "canada", "mexico"],
+        ...     start_date="2020-01-01",
+        ...     metric="trend"
+        ... )
+
+        # Compare developed vs emerging
+        >>> compare_inflation_workflow(["usa", "euro_area", "china", "india"])
+
+    Key Methodological Differences (Automatically Warned):
+        - **USA (CPI)**: Includes owner-occupied housing via OER (~24% of basket)
+        - **Euro Area (HICP)**: Excludes owner-occupied housing (harmonized for EU comparisons)
+        - **Canada (CPI)**: Includes mortgage interest costs (unique among developed countries)
+        - **Sweden (HICP)**: More extensive quality adjustments for electronics
+        - **India (CPI)**: Food ~46% of basket (vs ~15% in developed countries)
+
+    Central Bank Targets (Analyzed Automatically):
+        - USA: 2% PCE (not CPI, typically 0.3-0.5pp lower)
+        - Euro Area: 2% HICP (symmetric target)
+        - UK: 2% CPI (HICP equivalent)
+        - Japan: 2% CPI
+        - Canada: 2% (1-3% range)
+        - Australia: 2-3% range (not point target)
+
+    Limitations (MVP v0.2.0):
+        - Maximum 5 regions (performance constraint)
+        - Year-over-year % only (no month-over-month)
+        - No core/headline decomposition
+        - No food/energy component breakdown
+        - No PPP adjustment
+        - Simple linear trends only
+
+    Use Cases:
+        - Monetary policy stance comparison
+        - Inflation convergence/divergence analysis
+        - Target achievement assessment
+        - Regional inflation dynamics
+        - Sticky inflation identification
+
+    See Also:
+        - OECD CPI Methodology: https://www.oecd.org/sdd/prices-ppp/
+        - Eurostat HICP: https://ec.europa.eu/eurostat/web/hicp
+
+    Performance:
+        - Typical response time: 1-3 seconds (with caching)
+        - Parallel data fetching for efficiency
+        - Compact JSON format (AI-optimized)
+    """
+    logger.info(
+        f"[WORKFLOW] compare_inflation_across_regions: {len(regions)} regions"
+    )
+    return compare_inflation_across_regions(
+        regions=regions,
+        start_date=start_date,
+        end_date=end_date,
+        metric=metric,
     )
 
 
