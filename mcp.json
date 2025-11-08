@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "fred-economic-data": {
+      "command": "python",
+      "args": [
+        "-m",
+        "trabajo_ia_server.server"
+      ],
+      "cwd": "server",
+      "env": {
+        "PYTHONPATH": "src"
+      }
+    }
+  }
+}

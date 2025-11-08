@@ -7,6 +7,7 @@ import contextvars
 import json
 import logging
 import os
+import re
 import sys
 from contextlib import contextmanager
 from typing import Any, Dict, Optional
@@ -81,6 +82,46 @@ class RequestContextFilter(logging.Filter):
             request_id = get_request_id()
             if request_id is not None:
                 record.request_id = request_id
+        return True
+
+
+class SecretRedactingFilter(logging.Filter):
+    """
+    Redact sensitive information from log messages.
+    
+    Replaces patterns like:
+    - api_key=VALUE
+    - FRED_API_KEY=VALUE
+    - Authorization: VALUE
+    """
+    
+    # Patterns to redact (case-insensitive)
+    REDACT_PATTERNS = [
+        (re.compile(r'(api_key\s*=\s*["\']?)([^"\'\s&]+)', re.IGNORECASE), r'\1***REDACTED***'),
+        (re.compile(r'(FRED_API_KEY\s*=\s*["\']?)([^"\'\s&]+)', re.IGNORECASE), r'\1***REDACTED***'),
+        (re.compile(r'(Authorization\s*:\s*)(Bearer\s+)?([^"\'\s]+)', re.IGNORECASE), r'\1\2***REDACTED***'),
+        (re.compile(r'(Bearer\s+)([^\s]+)', re.IGNORECASE), r'\1***REDACTED***'),
+        (re.compile(r'(token\s*=\s*["\']?)([^"\'\s&]+)', re.IGNORECASE), r'\1***REDACTED***'),
+    ]
+    
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Redact sensitive patterns from log record message."""
+        if hasattr(record, 'msg') and isinstance(record.msg, str):
+            original_msg = record.msg
+            for pattern, replacement in self.REDACT_PATTERNS:
+                original_msg = pattern.sub(replacement, original_msg)
+            record.msg = original_msg
+        
+        # Also redact from args if present
+        if hasattr(record, 'args') and record.args:
+            redacted_args = []
+            for arg in record.args:
+                if isinstance(arg, str):
+                    for pattern, replacement in self.REDACT_PATTERNS:
+                        arg = pattern.sub(replacement, arg)
+                redacted_args.append(arg)
+            record.args = tuple(redacted_args)
+        
         return True
 
 
@@ -188,6 +229,12 @@ def setup_logger(
         logger.addFilter(RequestContextFilter())
     if not any(isinstance(f, RequestContextFilter) for f in stream_handler.filters):
         stream_handler.addFilter(RequestContextFilter())
+    
+    # Add secret redacting filter
+    if not any(isinstance(f, SecretRedactingFilter) for f in logger.filters):
+        logger.addFilter(SecretRedactingFilter())
+    if not any(isinstance(f, SecretRedactingFilter) for f in stream_handler.filters):
+        stream_handler.addFilter(SecretRedactingFilter())
 
     return logger
 

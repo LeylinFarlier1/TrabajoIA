@@ -816,7 +816,7 @@ Antes de descargar datos del PIB:
 ```
 Quiero datos de confianza del consumidor, pero no sé qué existe:
 
-1. Busca "consumer confidence" ampliamente (50 resultados)
+1. Busca "consumer confidence" ampliamente (10 resultados)
 2. Analiza tags comunes en resultados (search_series_tags)
 3. Busca tags relacionados interesantes (search_related_tags)
 4. Refina búsqueda con los mejores tags encontrados

@@ -48,9 +48,7 @@ def search_fred_series(
 
     Args:
         search_text: Text to search for (e.g., 'unemployment', 'GDP', 'inflation')
-        limit: Maximum results to return (1-100, default: 20).
-               Clamped to 100 to prevent exceeding MCP token limits.
-               Larger responses may cause token overflow errors.
+        limit: Maximum results to return (1-1000, default: 20 - optimized for AI consumption)
         offset: Starting offset for pagination (0-based)
         search_type: Search mode:
             - "full_text": Search in title, description, and metadata
@@ -59,8 +57,7 @@ def search_fred_series(
         filter_variable: Filter by metadata variable (e.g., "frequency", "units", "seasonal_adjustment")
         filter_value: Value for the filter variable (e.g., "Monthly", "Percent")
         tag_names: Semicolon-delimited tag names to include (e.g., "usa;nsa")
-        exclude_tag_names: Semicolon-delimited tag names to exclude (e.g., "discontinued;quarterly").
-                          Note: Requires tag_names to be set (FRED API requirement)
+        exclude_tag_names: Semicolon-delimited tag names to exclude (e.g., "discontinued;quarterly")
         realtime_start: Start date for real-time data window (YYYY-MM-DD)
         realtime_end: End date for real-time data window (YYYY-MM-DD)
         order_by: Sort field - "popularity", "search_rank", "title", "units",
@@ -80,16 +77,7 @@ def search_fred_series(
     try:
         # Get API key from configuration
         api_key = config.get_fred_api_key()
-        
-        # Validate and clamp limit to prevent token overflow (MCP limit: 25k tokens)
-        # Responses with limit > 100 can exceed MCP token limits
-        if limit > 100:
-            logger.warning(
-                f"Requested limit={limit} exceeds recommended maximum of 100. "
-                f"Large responses may exceed MCP token limits. Clamping to 100."
-            )
-            limit = 100
-        limit = max(1, min(limit, 100))  # Clamp to safe range (1-100)
+        limit = max(1, min(limit, 1000))  # Clamp to valid range
 
         # Base API parameters
         base_params = {

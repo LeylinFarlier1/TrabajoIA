@@ -5,6 +5,76 @@ All notable changes to Trabajo IA MCP Server will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2025-11-03
+
+### Added - Unified Inflation Analysis Workflow
+
+**Core vs Headline Analysis Integrated**
+
+Integrated core (excluding food & energy) vs headline inflation analysis directly into the main `compare_inflation_across_regions` workflow, eliminating the need for separate tools and providing comprehensive inflation insights in a single call.
+
+**Key Features:**
+- **Automatic Core Fetching**: When `include_core_analysis=True` (default), automatically fetches core inflation data for 22 supported countries
+- **Spread Analysis**: Calculates Headline - Core spread to identify inflation drivers
+- **Driver Categorization**: Classifies each region as:
+  - `energy_driven`: Food/energy prices driving (spread >0.5pp)
+  - `broad_based`: Core and headline aligned (spread -0.5 to 0.5pp)
+  - `core_pressure`: Core exceeds headline (spread <-0.5pp)
+- **Central Bank Context**: Provides CB target notes per region
+- **Summary Statistics**: Aggregates regions by category
+
+**Usage:**
+```python
+# With core analysis (default)
+compare_inflation_across_regions(["g7"])
+
+# Skip core analysis if not needed
+compare_inflation_across_regions(["usa"], include_core_analysis=False)
+```
+
+**Response Enhancement:**
+```json
+{
+  "comparison": {
+    "core_vs_headline": {
+      "regions_analyzed": 5,
+      "results": [...],
+      "summary": {
+        "energy_driven_count": 2,
+        "broad_based_count": 3,
+        "core_pressure_count": 0
+      }
+    }
+  }
+}
+```
+
+### Changed
+
+- **Workflow Consolidation**: `compare_core_headline` workflow deprecated and integrated into main workflow
+- **Parallel Fetching**: Core inflation data fetched in parallel with headline for efficiency
+- **Enhanced Documentation**: Updated docstrings with core analysis examples and interpretation guide
+
+### Removed
+
+- **Deprecated Workflow**: `compare_core_headline.py` (functionality fully integrated)
+- **Test Suite**: Old separate test suite removed (29 tests, functionality covered by integration tests)
+
+### Fixed
+
+- **API Response Parsing Bug**: Fixed `compare_core_headline` checking for "observations" key when FRED returns "data" key
+- **Test Mocks**: Updated all test mocks to use correct FRED API response structure
+- **Import Paths**: Corrected all imports after workflow file reorganization
+
+**Benefits:**
+- ✅ Single call for complete inflation analysis
+- ✅ Consistent response format
+- ✅ Better performance (parallel fetching)
+- ✅ Reduced code duplication
+- ✅ Improved maintainability
+
+---
+
 ## [0.1.9] - 2025-11-02
 
 ### Added - Cache, Telemetry, and Resilience Enhancements
@@ -27,9 +97,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **[BUG-001 CRITICAL]** Fixed token overflow in `search_fred_series` when limit > 100 by clamping maximum to 100 and adding
-  validation with warning logs. Previously, limit=1000 could produce 254,230 token responses, exceeding MCP's 25k limit and
-  causing critical server disconnections.
 - Hardened JSON parsing and error surfaces across the shared client so upstream API failures generate structured responses
   without leaking transport exceptions to MCP callers.
 
@@ -1094,15 +1161,3 @@ search_fred_series("unemployment", tag_names="nsa,usa")
 - Series comparison helpers and statistical summaries
 - Data transformation utilities
 - Export to multiple formats (CSV, Parquet, Excel)
-- Visualization helpers
-
-### Long-term Goals
-- Support for other economic data sources
-- Real-time data updates
-- Data aggregation and analysis tools
-- Interactive data exploration
-
----
-
-[0.1.1]: https://github.com/trabajo-ia/server/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/trabajo-ia/server/releases/tag/v0.1.0

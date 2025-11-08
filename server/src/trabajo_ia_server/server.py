@@ -19,11 +19,11 @@ from trabajo_ia_server.tools.fred.get_series_tags import get_series_tags
 from trabajo_ia_server.tools.fred.observations import get_series_observations
 from trabajo_ia_server.tools.fred.category import get_category
 from trabajo_ia_server.tools.fred.category_children import get_category_children
-from trabajo_ia_server.tools.fred.category_related import get_category_related
 from trabajo_ia_server.tools.fred.category_series import get_category_series
-from trabajo_ia_server.tools.fred.category_tags import get_category_tags
-from trabajo_ia_server.tools.fred.category_related_tags import get_category_related_tags
-from trabajo_ia_server.workflows.compare_inflation import compare_inflation_across_regions
+
+# Workflows
+from trabajo_ia_server.workflows.analyze_gdp import analyze_gdp_cross_country as analyze_gdp_internal
+
 from trabajo_ia_server.utils.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -666,57 +666,6 @@ def get_children(
     )
 
 
-@mcp.tool("get_fred_category_related")
-def get_related_categories(
-    category_id: int,
-    realtime_start: Optional[str] = None,
-    realtime_end: Optional[str] = None,
-) -> str:
-    """
-    Get related categories for a specific FRED category.
-
-    Discovers cross-references and semantic links between different parts of FRED's
-    category taxonomy. A related category is a one-way relation between 2 categories
-    that is not part of a parent-child hierarchy. Most categories do not have related
-    categories, but when they exist, they provide valuable connections between different
-    hierarchies.
-
-    Use this tool to find semantic connections between categories. For example, a state
-    category in the "Federal Reserve Districts" hierarchy might link to the same state
-    in the regional "States" hierarchy, enabling navigation across organizational
-    boundaries.
-
-    Args:
-        category_id: The ID for a FRED category (required).
-            Example values:
-            - 32073: St. Louis Fed District > States in District (has 7 related states)
-            - 125: Trade Balance (typically no related categories)
-        realtime_start: Real-time period start date YYYY-MM-DD (optional).
-            Default: today's date
-        realtime_end: Real-time period end date YYYY-MM-DD (optional).
-            Default: today's date
-
-    Returns:
-        Compact JSON with related categories array and metadata.
-
-    Response includes array of related categories, each with:
-        - id: Category ID
-        - name: Category name
-        - parent_id: Parent category ID (in the target hierarchy)
-
-    Examples:
-        >>> get_related_categories(32073)  # St. Louis District states
-        >>> get_related_categories(125)  # Returns empty list
-        >>> get_related_categories(32073, realtime_start="2024-01-01")
-    """
-    logger.info(f"Fetching related categories for category_id: {category_id}")
-    return get_category_related(
-        category_id=category_id,
-        realtime_start=realtime_start,
-        realtime_end=realtime_end,
-    )
-
-
 @mcp.tool("get_fred_category_series")
 def get_series_in_category(
     category_id: int,
@@ -832,388 +781,11 @@ def get_series_in_category(
     )
 
 
-@mcp.tool("get_fred_category_tags")
-def get_tags_for_category(
-    category_id: int,
-    realtime_start: Optional[str] = None,
-    realtime_end: Optional[str] = None,
-    tag_names: Optional[str] = None,
-    tag_group_id: Optional[Literal["freq", "gen", "geo", "geot", "rls", "seas", "src"]] = None,
-    search_text: Optional[str] = None,
-    limit: int = 1000,
-    offset: int = 0,
-    order_by: Literal["series_count", "popularity", "created", "name", "group_id"] = "series_count",
-    sort_order: Literal["asc", "desc"] = "desc",
-) -> str:
-    """
-    Get FRED tags for a specific category with optional filtering.
-
-    Discovers what tags are associated with series in a category. Since series are
-    assigned both tags and categories, this tool indirectly retrieves tags through
-    the series in the category. This helps understand the characteristics of data
-    in a category (frequency, geography, source, etc.).
-
-    Use this tool to:
-    - Discover what types of data exist in a category
-    - Find common tags across series in a category
-    - Filter by tag type (frequency, geography, source, etc.)
-    - Understand data characteristics before fetching series
-
-    Note: No tags exist for categories without series.
-
-    Args:
-        category_id: The ID for a FRED category (required).
-            Example values:
-            - 125: Trade Balance
-            - 32991: Money, Banking, & Finance
-            - 32992: National Accounts
-        realtime_start: Real-time period start date YYYY-MM-DD (optional).
-            Default: today's date
-        realtime_end: Real-time period end date YYYY-MM-DD (optional).
-            Default: today's date
-        tag_names: Semicolon-delimited tag names to filter by (optional).
-            Example: "trade;goods" - only include these specific tags
-        tag_group_id: Filter by tag type (optional):
-            - "freq": Frequency tags (monthly, quarterly, annual)
-            - "gen": General/concept tags (balance, trade, gdp)
-            - "geo": Geography tags (usa, canada, japan)
-            - "geot": Geography type tags (nation, state, county)
-            - "rls": Release tags
-            - "seas": Seasonal adjustment tags (sa, nsa)
-            - "src": Source tags (bea, bls, census)
-        search_text: Search for tags containing specific words (optional).
-        limit: Maximum results to return (1-1000, default: 1000).
-        offset: Starting offset for pagination (default: 0).
-        order_by: Sort field (default: "series_count"):
-            - "series_count": Number of series with this tag
-            - "popularity": FRED popularity score
-            - "created": When tag was created
-            - "name": Tag name alphabetically
-            - "group_id": Tag group/type
-        sort_order: Sort direction - "asc" or "desc" (default: "desc").
-
-    Returns:
-        Compact JSON with tags array and metadata.
-
-    Response includes array of tags, each with:
-        - name: Tag name
-        - group_id: Tag type/group
-        - notes: Optional tag description
-        - created: Creation timestamp
-        - popularity: FRED popularity score
-        - series_count: Number of series with this tag in the category
-
-    Examples:
-        >>> get_tags_for_category(125)  # All tags for Trade Balance
-        >>> get_tags_for_category(125, tag_group_id="freq")  # Only frequency tags
-        >>> get_tags_for_category(125, search_text="balance")  # Search for "balance"
-        >>> get_tags_for_category(125, tag_names="trade;goods")  # Specific tags only
-        >>> get_tags_for_category(125, limit=50, order_by="popularity")  # Top 50 by popularity
-        >>> get_tags_for_category(32991, tag_group_id="src")  # Sources in Money/Banking
-    """
-    logger.info(f"Fetching tags for category_id: {category_id}")
-    return get_category_tags(
-        category_id=category_id,
-        realtime_start=realtime_start,
-        realtime_end=realtime_end,
-        tag_names=tag_names,
-        tag_group_id=tag_group_id,
-        search_text=search_text,
-        limit=limit,
-        offset=offset,
-        order_by=order_by,
-        sort_order=sort_order,
-    )
-
-
-@mcp.tool("get_fred_category_related_tags")
-def get_related_tags_for_category(
-    category_id: int,
-    tag_names: str,
-    realtime_start: Optional[str] = None,
-    realtime_end: Optional[str] = None,
-    exclude_tag_names: Optional[str] = None,
-    tag_group_id: Optional[Literal["freq", "gen", "geo", "geot", "rls", "seas", "src"]] = None,
-    search_text: Optional[str] = None,
-    limit: int = 1000,
-    offset: int = 0,
-    order_by: Literal["series_count", "popularity", "created", "name", "group_id"] = "series_count",
-    sort_order: Literal["asc", "desc"] = "desc",
-) -> str:
-    """
-    Get related FRED tags for one or more tags within a category.
-
-    Finds tags that co-occur with a given set of tags on series within a specific
-    category. This is powerful for tag-based discovery: start with known tags and
-    find what other tags commonly appear on the same series.
-
-    Related tags are those assigned to series that match ALL tags in tag_names,
-    match NONE of the tags in exclude_tag_names, and belong to the specified category.
-
-    Use this tool to:
-    - Discover what other characteristics series with certain tags have
-    - Find available frequencies for series with specific concept tags
-    - Identify sources that provide data with certain tags
-    - Build progressive tag-based queries
-
-    Args:
-        category_id: The ID for a FRED category (required).
-            Example values:
-            - 125: Trade Balance
-            - 32991: Money, Banking, & Finance
-            - 32992: National Accounts
-        tag_names: Semicolon-delimited tags that series MUST match ALL of (required).
-            Example: "services;quarterly" - find related tags for series having BOTH
-        realtime_start: Real-time period start date YYYY-MM-DD (optional).
-            Default: today's date
-        realtime_end: Real-time period end date YYYY-MM-DD (optional).
-            Default: today's date
-        exclude_tag_names: Semicolon-delimited tags that series must match NONE of (optional).
-            Example: "goods;sa" - exclude series with "goods" OR "sa"
-        tag_group_id: Filter result tags by type (optional):
-            - "freq": Frequency tags (monthly, quarterly, annual)
-            - "gen": General/concept tags (balance, trade, gdp)
-            - "geo": Geography tags (usa, canada, japan)
-            - "geot": Geography type tags (nation, state, county)
-            - "rls": Release tags
-            - "seas": Seasonal adjustment tags (sa, nsa)
-            - "src": Source tags (bea, bls, census)
-        search_text: Search for result tags containing specific words (optional).
-        limit: Maximum results to return (1-1000, default: 1000).
-        offset: Starting offset for pagination (default: 0).
-        order_by: Sort field (default: "series_count"):
-            - "series_count": Number of series with this tag
-            - "popularity": FRED popularity score
-            - "created": When tag was created
-            - "name": Tag name alphabetically
-            - "group_id": Tag group/type
-        sort_order: Sort direction - "asc" or "desc" (default: "desc").
-
-    Returns:
-        Compact JSON with related tags array and metadata.
-
-    Response includes array of related tags, each with:
-        - name: Tag name
-        - group_id: Tag type/group
-        - notes: Optional tag description
-        - created: Creation timestamp
-        - popularity: FRED popularity score
-        - series_count: Number of matching series with this tag
-
-    Examples:
-        >>> get_related_tags_for_category(125, "services;quarterly")  # Tags for services+quarterly
-        >>> get_related_tags_for_category(125, "services", exclude_tag_names="goods")  # Exclude goods
-        >>> get_related_tags_for_category(125, "services", tag_group_id="freq")  # Only frequencies
-        >>> get_related_tags_for_category(125, "quarterly", search_text="balance")  # Search balance
-        >>> get_related_tags_for_category(125, "usa", limit=50, order_by="popularity")  # Top 50
-        >>> get_related_tags_for_category(32991, "monthly;sa", tag_group_id="src")  # Sources
-    """
-    logger.info(f"Fetching related tags for category_id: {category_id}, tag_names: {tag_names}")
-    return get_category_related_tags(
-        category_id=category_id,
-        tag_names=tag_names,
-        realtime_start=realtime_start,
-        realtime_end=realtime_end,
-        exclude_tag_names=exclude_tag_names,
-        tag_group_id=tag_group_id,
-        search_text=search_text,
-        limit=limit,
-        offset=offset,
-        order_by=order_by,
-        sort_order=sort_order,
-    )
-
-
 # =============================================================================
 # v0.2.0 WORKFLOW TOOLS - Complete End-to-End Analysis
 # =============================================================================
 
-
-@mcp.tool("compare_inflation_across_regions")
-def compare_inflation_workflow(
-    regions: list,
-    start_date: Optional[str] = None,
-    end_date: Optional[str] = None,
-    metric: Literal["latest", "trend", "all"] = "latest",
-) -> str:
-    """
-    Compare inflation rates across multiple countries/regions.
-
-    Complete v0.2.0 workflow implementing OECD/IMF/Eurostat best practices for
-    cross-country inflation comparisons. Uses HICP (harmonized) for Europe,
-    national CPI for others. Analyzes distance from central bank targets and
-    detects methodological differences.
-
-    **Best Practices Implemented:**
-    - HICP prioritized for European countries (harmonized, comparable)
-    - Year-over-year % change (eliminates seasonality)
-    - Central bank inflation target analysis
-    - Comparability warnings (housing methodology, etc.)
-    - Base effects detection (temporary measures unwinding)
-
-    Args:
-        regions: List of region codes or preset names.
-            Individual countries: ["usa", "euro_area", "uk", "japan", "canada", ...]
-            Presets: ["g7"], ["brics"], ["north_america"], ["eurozone_core"], etc.
-            Can mix: ["g7", "china"] → expands to G7 countries + China
-            Maximum: 5 regions for MVP v0.2.0 (performance constraint)
-        start_date: Start date for comparison period (YYYY-MM-DD).
-                   Default: Last 5 years
-        end_date: End date for comparison period (YYYY-MM-DD).
-                 Default: Latest available data
-        metric: Analysis focus:
-            - "latest": Latest snapshot, ranking, target analysis (default)
-            - "trend": Trend analysis (direction, velocity)
-            - "all": All of the above
-
-    Returns:
-        Compact JSON with:
-        - comparison: Inflation rates, rankings, target analysis, trends
-        - metadata: Series used (CPI vs HICP), methodological notes
-        - comparability_warnings: Important differences (housing, quality adjustments, etc.)
-        - limitations: What this analysis does NOT do
-        - suggestions: Interpretation guidance
-
-    Response Format:
-        {
-            "tool": "compare_inflation_across_regions",
-            "comparison": {
-                "regions": ["usa", "euro_area", "uk"],
-                "period": "2020-01-01 to 2025-11-01",
-                "latest_snapshot": {
-                    "date": "2025-10-01",
-                    "ranking": [
-                        {
-                            "region": "euro_area",
-                            "value": 2.22,
-                            "rank": 1,
-                            "target": 2.0,
-                            "distance_from_target": 0.22,
-                            "target_measure": "HICP YoY"
-                        },
-                        ...
-                    ]
-                },
-                "analysis": {
-                    "highest": {...},
-                    "lowest": {...},
-                    "spread": 0.80,
-                    "convergence": "regions converging (CV decreased...)"
-                },
-                "target_analysis": {
-                    "regions_above_target": ["usa"],
-                    "regions_at_target": ["euro_area", "uk"],
-                    "regions_below_target": [],
-                    "sticky_inflation": ["usa"],  # >3% for 6+ months
-                    "interpretation": "..."
-                },
-                "trends": {...},
-                "time_series": [...]
-            },
-            "metadata": {
-                "transformation": "Year-over-year % change (pc1)",
-                "series_used": [
-                    {
-                        "region": "usa",
-                        "series_id": "CPIAUCSL",
-                        "index_type": "CPI",
-                        "includes_owner_housing": true,
-                        "methodological_notes": "CPI-U includes owner-occupied housing via OER (~24% of basket)..."
-                    },
-                    {
-                        "region": "euro_area",
-                        "series_id": "CP0000EZ19M086NEST",
-                        "index_type": "HICP",
-                        "includes_owner_housing": false,
-                        "methodological_notes": "HICP EXCLUDES owner-occupied housing..."
-                    },
-                    ...
-                ]
-            },
-            "comparability_warnings": [
-                "Mixed index types: CPI, HICP. HICP excludes owner-occupied housing...",
-                "Canada includes mortgage interest costs (unique methodology)...",
-                ...
-            ],
-            "limitations": [
-                "HICP (Europe) excludes owner-occupied housing; CPI (others) includes it",
-                "No PPP adjustment - nominal comparison only",
-                "No core/headline decomposition",
-                ...
-            ],
-            "suggestions": [
-                "Small differences (<0.5pp) often reflect measurement differences",
-                "For European countries, HICP is harmonized and most comparable",
-                "Check 'comparability_warnings' for methodological differences",
-                ...
-            ]
-        }
-
-    Examples:
-        # Basic G7 inflation comparison
-        >>> compare_inflation_workflow(["g7"])
-
-        # Euro area core vs periphery
-        >>> compare_inflation_workflow(["eurozone_core", "eurozone_periphery"], metric="all")
-
-        # North America with trend analysis
-        >>> compare_inflation_workflow(
-        ...     ["usa", "canada", "mexico"],
-        ...     start_date="2020-01-01",
-        ...     metric="trend"
-        ... )
-
-        # Compare developed vs emerging
-        >>> compare_inflation_workflow(["usa", "euro_area", "china", "india"])
-
-    Key Methodological Differences (Automatically Warned):
-        - **USA (CPI)**: Includes owner-occupied housing via OER (~24% of basket)
-        - **Euro Area (HICP)**: Excludes owner-occupied housing (harmonized for EU comparisons)
-        - **Canada (CPI)**: Includes mortgage interest costs (unique among developed countries)
-        - **Sweden (HICP)**: More extensive quality adjustments for electronics
-        - **India (CPI)**: Food ~46% of basket (vs ~15% in developed countries)
-
-    Central Bank Targets (Analyzed Automatically):
-        - USA: 2% PCE (not CPI, typically 0.3-0.5pp lower)
-        - Euro Area: 2% HICP (symmetric target)
-        - UK: 2% CPI (HICP equivalent)
-        - Japan: 2% CPI
-        - Canada: 2% (1-3% range)
-        - Australia: 2-3% range (not point target)
-
-    Limitations (MVP v0.2.0):
-        - Maximum 5 regions (performance constraint)
-        - Year-over-year % only (no month-over-month)
-        - No core/headline decomposition
-        - No food/energy component breakdown
-        - No PPP adjustment
-        - Simple linear trends only
-
-    Use Cases:
-        - Monetary policy stance comparison
-        - Inflation convergence/divergence analysis
-        - Target achievement assessment
-        - Regional inflation dynamics
-        - Sticky inflation identification
-
-    See Also:
-        - OECD CPI Methodology: https://www.oecd.org/sdd/prices-ppp/
-        - Eurostat HICP: https://ec.europa.eu/eurostat/web/hicp
-
-    Performance:
-        - Typical response time: 1-3 seconds (with caching)
-        - Parallel data fetching for efficiency
-        - Compact JSON format (AI-optimized)
-    """
-    logger.info(
-        f"[WORKFLOW] compare_inflation_across_regions: {len(regions)} regions"
-    )
-    return compare_inflation_across_regions(
-        regions=regions,
-        start_date=start_date,
-        end_date=end_date,
-        metric=metric,
-    )
+# Workflows removed - not needed
 
 
 def main():
@@ -1238,6 +810,110 @@ def main():
     except Exception as e:
         logger.error(f"Error running server: {e}")
         sys.exit(1)
+
+
+@mcp.tool("analyze_gdp_cross_country")
+def analyze_gdp_cross_country(
+    countries: str,
+    gdp_variants: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    comparison_mode: str = "absolute",
+    base_year: Optional[int] = None,
+    include_rankings: bool = True,
+    include_convergence: bool = True,
+    include_growth_analysis: bool = True,
+    detect_structural_breaks: bool = True,
+    output_format: str = "analysis",
+    frequency: str = "annual",
+    fill_missing: str = "interpolate",
+    align_method: str = "inner",
+    benchmark_against: Optional[str] = None,
+    validate_variants: bool = True,
+    period_split: Optional[str] = None
+) -> str:
+    """
+    Analyze GDP across countries with deep economic analysis.
+    
+    MCP tool providing comprehensive GDP cross-country analysis with rankings,
+    convergence tests, structural breaks detection, and multiple output formats.
+    
+    Args:
+        countries: Country codes or preset name. Examples:
+            - Single country: "usa"
+            - Multiple: "usa,canada,mexico" (comma-separated)
+            - Preset: "g7", "latam", "brics", "oecd", "emerging", "developed"
+        gdp_variants: GDP variants to analyze (comma-separated). Options:
+            - "nominal_usd": GDP in current USD
+            - "constant_2010": GDP in constant 2010 USD (real growth)
+            - "per_capita_constant": GDP per capita, constant prices (most used)
+            - "per_capita_ppp": GDP per capita PPP-adjusted
+            - "growth_rate": Annual growth rate (computed)
+            - "ppp_adjusted": Total GDP PPP-adjusted
+            Default: "per_capita_constant"
+        start_date: Start date YYYY-MM-DD (default: 1960-01-01)
+        end_date: End date YYYY-MM-DD (default: latest available)
+        comparison_mode: Analysis mode. Options:
+            - "absolute": Actual values in USD
+            - "indexed": Normalized to 100 at base_year
+            - "growth_rates": Focus on growth rates
+            - "ppp": PPP-adjusted comparison
+        base_year: Base year for indexed mode (e.g., 2000)
+        include_rankings: Include country rankings by variant
+        include_convergence: Compute sigma/beta convergence analysis
+        include_growth_analysis: CAGR, volatility, stability_index
+        detect_structural_breaks: Chow test + rolling variance detection
+        output_format: Output type. Options:
+            - "analysis": Comprehensive JSON analysis (default)
+            - "dataset": Tidy DataFrame as JSON records
+            - "summary": Executive summary markdown
+            - "both": JSON analysis + dataset combined
+        frequency: "annual" (default) or "quarterly"
+        fill_missing: Handle missing data: "interpolate", "forward", "drop"
+        align_method: Date alignment: "inner" (common dates) or "outer" (all dates)
+        benchmark_against: Benchmark country (e.g., "usa") or None
+        validate_variants: Validate variant dependencies before fetching
+        period_split: Split analysis: "decade", "5y", or None
+    
+    Returns:
+        JSON string with analysis results, metadata, and warnings
+    
+    Examples:
+        >>> analyze_gdp_cross_country("g7", "per_capita_constant")
+        >>> analyze_gdp_cross_country("latam", "per_capita_constant,growth_rate", start_date="2000-01-01")
+        >>> analyze_gdp_cross_country("usa,china,india", output_format="both")
+    """
+    logger.info(f"Analyzing GDP: countries={countries}, variants={gdp_variants}")
+    
+    # Parse comma-separated inputs
+    countries_list = [c.strip() for c in countries.split(",")]
+    
+    variants_list = None
+    if gdp_variants:
+        variants_list = [v.strip() for v in gdp_variants.split(",")]
+    
+    # Call internal function
+    return analyze_gdp_internal(
+        countries=countries_list,
+        gdp_variants=variants_list,
+        include_population=True,
+        start_date=start_date,
+        end_date=end_date,
+        period_split=period_split,
+        comparison_mode=comparison_mode,
+        base_year=base_year,
+        include_rankings=include_rankings,
+        include_convergence=include_convergence,
+        include_growth_analysis=include_growth_analysis,
+        calculate_productivity=False,
+        detect_structural_breaks=detect_structural_breaks,
+        output_format=output_format,
+        frequency=frequency,
+        fill_missing=fill_missing,
+        align_method=align_method,
+        benchmark_against=benchmark_against,
+        validate_variants=validate_variants
+    )
 
 
 if __name__ == "__main__":

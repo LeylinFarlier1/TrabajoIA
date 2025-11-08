@@ -1,61 +1,37 @@
-"""Configuration module for Trabajo IA Server."""
-from __future__ import annotations
+"""
+Configuration module for Trabajo IA Server.
 
+Manages environment variables and server configuration.
+"""
 import os
 from pathlib import Path
 from typing import Dict, Optional, Tuple
+from dotenv import load_dotenv
 
 
-def _load_env_file(dotenv_path: Path) -> None:
-    """Best-effort loader for ``.env`` files when ``python-dotenv`` is missing.
+class ConfigError(Exception):
+    """Exception raised when configuration is invalid or missing."""
+    pass
 
-    The production dependency list still includes ``python-dotenv``.  However,
-    our test environment stubs optional dependencies to keep unit tests
-    lightweight.  Importing :mod:`python-dotenv` in that context would raise an
-    :class:`ImportError`, so we provide this tiny fallback that mirrors the
-    subset of functionality we rely on (simple ``KEY=VALUE`` assignments).
-    """
-
-    if not dotenv_path.exists():
-        return
-
-    for line in dotenv_path.read_text(encoding="utf-8").splitlines():
-        stripped = line.strip()
-        if not stripped or stripped.startswith("#"):
-            continue
-
-        if "=" not in stripped:
-            continue
-
-        key, value = stripped.split("=", 1)
-        key = key.strip()
-        value = value.strip().strip("\"'")
-
-        os.environ.setdefault(key, value)
-
-
+# Load environment variables from .env file
 env_path = Path(__file__).parent.parent.parent / ".env"
-
-try:  # pragma: no cover - executed only when dependency is available
-    from dotenv import load_dotenv
-
-    load_dotenv(dotenv_path=env_path)
-except Exception:  # pragma: no cover - executed in lightweight test envs
-    _load_env_file(env_path)
+load_dotenv(dotenv_path=env_path)
 
 
-def _str_to_bool(value: Optional[str], default: bool = True) -> bool:
+def _str_to_bool(value: Optional[str], default: bool = False) -> bool:
+    """Convert string environment variable to boolean."""
     if value is None:
         return default
-    return value.strip().lower() not in {"0", "false", "off", "no"}
+    return value.strip().lower() in {"true", "1", "yes", "on"}
 
 
 def _safe_int(value: Optional[str], default: int) -> int:
+    """Safely convert string to int with fallback."""
     if value is None:
         return default
     try:
         return int(value)
-    except (TypeError, ValueError):
+    except (ValueError, TypeError):
         return default
 
 
@@ -80,7 +56,7 @@ class Config:
     except (TypeError, ValueError):
         LOG_JSON_INDENT = None
 
-    # Cache configuration
+    # Cache Configuration
     CACHE_ENABLED: bool = _str_to_bool(os.getenv("CACHE_ENABLED"), default=True)
     CACHE_BACKEND: str = os.getenv("CACHE_BACKEND", "memory")
     CACHE_DEFAULT_TTL_SECONDS: int = max(
@@ -104,50 +80,65 @@ class Config:
         "category": 3600,
         "category_children": 3600,
         "category_related": 3600,
-        "category_series": 900,
-        "category_tags": 1800,
-        "category_related_tags": 1800,
-        "observations": 900,
+        "observations": 600,
     }
 
-    # Coordinated FRED rate limit configuration
-    FRED_RATE_LIMIT_ENABLED: bool = _str_to_bool(
-        os.getenv("FRED_RATE_LIMIT_ENABLED"), default=True
+    # Rate Limiter Configuration
+    FRED_RATE_LIMIT_ENABLED: bool = _str_to_bool(os.getenv("FRED_RATE_LIMIT_ENABLED"), default=True)
+    FRED_RATE_LIMIT_PER_SECOND: Optional[int] = _safe_int(
+        os.getenv("FRED_RATE_LIMIT_PER_SECOND"), 10
     )
-    FRED_RATE_LIMIT_PER_SECOND: int = max(
-        0, _safe_int(os.getenv("FRED_RATE_LIMIT_PER_SECOND"), 10)
+    FRED_RATE_LIMIT_PER_MINUTE: Optional[int] = _safe_int(
+        os.getenv("FRED_RATE_LIMIT_PER_MINUTE"), 120
     )
-    FRED_RATE_LIMIT_PER_MINUTE: int = max(
-        0, _safe_int(os.getenv("FRED_RATE_LIMIT_PER_MINUTE"), 120)
-    )
-    FRED_RATE_LIMIT_DEFAULT_RETRY_SECONDS: int = max(
-        1, _safe_int(os.getenv("FRED_RATE_LIMIT_DEFAULT_RETRY_SECONDS"), 5)
+    FRED_RATE_LIMIT_DEFAULT_RETRY_SECONDS: float = float(
+        os.getenv("FRED_RATE_LIMIT_DEFAULT_RETRY_SECONDS", "5.0")
     )
 
-    # Metrics configuration
+    # Metrics Configuration
     METRICS_ENABLED: bool = _str_to_bool(os.getenv("METRICS_ENABLED"), default=True)
     METRICS_EXPORT_FORMAT: str = os.getenv("METRICS_EXPORT_FORMAT", "json")
 
     @classmethod
     def validate(cls) -> None:
-        """Validate required configuration values."""
+        """
+        Validate required configuration values.
+        
+        Raises:
+            ConfigError: If FRED_API_KEY is missing or invalid.
+        """
         if not cls.FRED_API_KEY:
-            raise ValueError(
+            raise ConfigError(
                 "FRED_API_KEY environment variable is required. "
-                "Please set it in your .env file."
+                "Please set it in your .env file or environment. "
+                "Get your API key at: https://fred.stlouisfed.org/docs/api/api_key.html"
             )
+        
+        if not cls.FRED_API_KEY.strip():
+            raise ConfigError("FRED_API_KEY cannot be empty or whitespace only")
 
     @classmethod
     def get_fred_api_key(cls) -> str:
-        """Get FRED API key with validation."""
+        """
+        Get FRED API key with validation.
+        
+        Returns:
+            str: The FRED API key
+            
+        Raises:
+            ConfigError: If FRED_API_KEY is not configured
+        """
         if not cls.FRED_API_KEY:
-            raise ValueError("FRED_API_KEY not configured")
+            raise ConfigError(
+                "FRED_API_KEY not configured. "
+                "Please set it in your .env file. "
+                "Get your API key at: https://fred.stlouisfed.org/docs/api/api_key.html"
+            )
         return cls.FRED_API_KEY
 
     @classmethod
     def get_cache_ttl(cls, namespace: str, fallback: Optional[int] = None) -> Optional[int]:
         """Resolve TTL for a cache namespace with environment overrides."""
-
         if not cls.CACHE_ENABLED:
             return None
 
@@ -175,21 +166,16 @@ class Config:
     @classmethod
     def get_rate_limits(cls) -> Tuple[Optional[int], Optional[int]]:
         """Return the configured per-second and per-minute FRED request limits."""
-
         if not cls.FRED_RATE_LIMIT_ENABLED:
             return None, None
-
-        per_second = cls.FRED_RATE_LIMIT_PER_SECOND or None
-        per_minute = cls.FRED_RATE_LIMIT_PER_MINUTE or None
-        return per_second, per_minute
+        return cls.FRED_RATE_LIMIT_PER_SECOND, cls.FRED_RATE_LIMIT_PER_MINUTE
 
     @classmethod
     def get_rate_limit_penalty(cls, fallback: Optional[float] = None) -> float:
         """Return the default backoff seconds when FRED rate limits are triggered."""
-
-        if fallback is not None and fallback > 0:
+        if fallback is not None:
             return fallback
-        return float(max(1, cls.FRED_RATE_LIMIT_DEFAULT_RETRY_SECONDS))
+        return cls.FRED_RATE_LIMIT_DEFAULT_RETRY_SECONDS
 
 
 # Singleton instance

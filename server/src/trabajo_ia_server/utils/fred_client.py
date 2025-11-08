@@ -100,10 +100,22 @@ class FredClient:
 
     @staticmethod
     def _build_cache_key(url: str, params: Mapping[str, Any]) -> str:
+        """
+        Build cache key from URL and params, excluding sensitive data.
+        
+        Excludes: api_key, token, authorization
+        """
+        # Sensitive parameter keys to exclude from cache key
+        SENSITIVE_KEYS = {'api_key', 'token', 'authorization', 'auth', 'password', 'secret'}
+        
         normalized_items: list[Tuple[str, str]] = []
         for key, value in params.items():
             if value is None:
                 continue
+            # Skip sensitive parameters
+            if key.lower() in SENSITIVE_KEYS:
+                continue
+            
             if isinstance(value, (list, tuple, set)):
                 for item in value:
                     normalized_items.append((key, str(item)))
