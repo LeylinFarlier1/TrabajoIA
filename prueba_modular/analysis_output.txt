@@ -1,0 +1,243 @@
+================================================================================
+ANALISIS GDP G7 (1980-2010) - ENFOQUE MODULAR
+================================================================================
+
+Data source: FRED (Federal Reserve Economic Data)
+Series: Constant GDP per capita (2010 US Dollars)
+Period: 1980-2010 (31 years)
+Countries: Canada, France, Germany, Italy, Japan, USA, United Kingdom
+
+
+
+================================================================================
+FASE 1: METRICAS BASICAS POR PAIS
+================================================================================
+
+Canada:
+  GDP 1980: $27,622.37
+  GDP 2010: $41,164.34
+  Total Growth: 49.03%
+  CAGR: 1.34%
+  Volatility: 2.23%
+  Stability Index: 0.3094
+
+France:
+  GDP 1980: $23,050.93
+  GDP 2010: $35,578.20
+  Total Growth: 54.35%
+  CAGR: 1.46%
+  Volatility: 1.42%
+  Stability Index: 0.4125
+
+Germany:
+  GDP 1980: $23,977.27
+  GDP 2010: $38,517.44
+  Total Growth: 60.64%
+  CAGR: 1.59%
+  Volatility: 1.96%
+  Stability Index: 0.3379
+
+Italy:
+  GDP 1980: $21,901.93
+  GDP 2010: $31,928.55
+  Total Growth: 45.78%
+  CAGR: 1.26%
+  Volatility: 1.90%
+  Stability Index: 0.3445
+
+Japan:
+  GDP 1980: $19,334.37
+  GDP 2010: $32,942.20
+  Total Growth: 70.38%
+  CAGR: 1.79%
+  Volatility: 2.35%
+  Stability Index: 0.2988
+
+USA:
+  GDP 1980: $31,081.62
+  GDP 2010: $52,812.68
+  Total Growth: 69.92%
+  CAGR: 1.78%
+  Volatility: 1.94%
+  Stability Index: 0.3396
+
+United Kingdom:
+  GDP 1980: $23,526.26
+  GDP 2010: $42,311.43
+  Total Growth: 79.85%
+  CAGR: 1.98%
+  Volatility: 2.14%
+  Stability Index: 0.3188
+
+
+================================================================================
+FASE 2: RANKINGS
+================================================================================
+
+--- TOP 7 por GDP per capita 2010 ---
+1. USA: $52,812.68
+2. United Kingdom: $42,311.43
+3. Canada: $41,164.34
+4. Germany: $38,517.44
+5. France: $35,578.20
+6. Japan: $32,942.20
+7. Italy: $31,928.55
+
+--- TOP 7 por CAGR (1980-2010) ---
+1. United Kingdom: 1.98%
+2. Japan: 1.79%
+3. USA: 1.78%
+4. Germany: 1.59%
+5. France: 1.46%
+6. Canada: 1.34%
+7. Italy: 1.26%
+
+--- TOP 7 por Estabilidad ---
+1. France: 0.4125 (volatility: 1.42%)
+2. Italy: 0.3445 (volatility: 1.90%)
+3. USA: 0.3396 (volatility: 1.94%)
+4. Germany: 0.3379 (volatility: 1.96%)
+5. United Kingdom: 0.3188 (volatility: 2.14%)
+6. Canada: 0.3094 (volatility: 2.23%)
+7. Japan: 0.2988 (volatility: 2.35%)
+
+
+================================================================================
+FASE 3: CONVERGENCIA SIGMA
+================================================================================
+
+Coeficiente de Variacion:
+  1980: 0.1587
+  2010: 0.1811
+  Cambio: 0.0224
+
+Regresion lineal (CV vs tiempo):
+  Pendiente: 0.001207
+  R-cuadrado: 0.3532
+  p-value: 0.0004
+
+[X] DIVERGENCIA DETECTADA (p < 0.05, pendiente positiva)
+  Los paises del G7 se estan volviendo mas diferentes.
+
+
+================================================================================
+FASE 4: CONVERGENCIA BETA
+================================================================================
+
+Regresion: CAGR vs log(GDP inicial 1980)
+  Pendiente (beta): -0.0141
+  R-cuadrado: 0.0001
+  p-value: 0.9859
+
+[O] NO HAY CONVERGENCIA BETA SIGNIFICATIVA (p >= 0.05)
+
+Datos por pais:
+  Canada: GDP 1980 = $27,622, CAGR = 1.34%
+  France: GDP 1980 = $23,051, CAGR = 1.46%
+  Germany: GDP 1980 = $23,977, CAGR = 1.59%
+  Italy: GDP 1980 = $21,902, CAGR = 1.26%
+  Japan: GDP 1980 = $19,334, CAGR = 1.79%
+  USA: GDP 1980 = $31,082, CAGR = 1.78%
+  United Kingdom: GDP 1980 = $23,526, CAGR = 1.98%
+
+
+================================================================================
+FASE 5: DETECCION DE STRUCTURAL BREAKS
+================================================================================
+
+Canada:
+  1986: [DOWN] Reduccion volatilidad (ratio: 0.19x)
+  1989: [UP] Aumento volatilidad (ratio: 1.66x)
+  1990: [UP] Aumento volatilidad (ratio: 2.33x)
+  1992: [DOWN] Reduccion volatilidad (ratio: 0.62x)
+  1993: [UP] Aumento volatilidad (ratio: 1.92x)
+  1995: [DOWN] Reduccion volatilidad (ratio: 0.29x)
+  2003: [DOWN] Reduccion volatilidad (ratio: 0.63x)
+  2004: [DOWN] Reduccion volatilidad (ratio: 0.26x)
+  2005: [DOWN] Reduccion volatilidad (ratio: 0.59x)
+  2007: [UP] Aumento volatilidad (ratio: 2.46x)
+  2008: [UP] Aumento volatilidad (ratio: 6.83x)
+
+France:
+  1987: [UP] Aumento volatilidad (ratio: 5.35x)
+  1989: [DOWN] Reduccion volatilidad (ratio: 0.65x)
+  1990: [UP] Aumento volatilidad (ratio: 1.68x)
+  1993: [DOWN] Reduccion volatilidad (ratio: 0.50x)
+  1997: [DOWN] Reduccion volatilidad (ratio: 0.35x)
+  2001: [UP] Aumento volatilidad (ratio: 2.25x)
+  2004: [DOWN] Reduccion volatilidad (ratio: 0.32x)
+  2008: [UP] Aumento volatilidad (ratio: 5.28x)
+
+Germany:
+  1986: [DOWN] Reduccion volatilidad (ratio: 0.30x)
+  1989: [UP] Aumento volatilidad (ratio: 2.07x)
+  1992: [UP] Aumento volatilidad (ratio: 3.94x)
+  1995: [DOWN] Reduccion volatilidad (ratio: 0.45x)
+  1997: [DOWN] Reduccion volatilidad (ratio: 0.17x)
+  1999: [UP] Aumento volatilidad (ratio: 1.59x)
+  2000: [DOWN] Reduccion volatilidad (ratio: 0.44x)
+  2001: [UP] Aumento volatilidad (ratio: 6.20x)
+  2002: [UP] Aumento volatilidad (ratio: 1.53x)
+  2004: [DOWN] Reduccion volatilidad (ratio: 0.47x)
+  2005: [UP] Aumento volatilidad (ratio: 3.73x)
+  2007: [DOWN] Reduccion volatilidad (ratio: 0.58x)
+  2008: [UP] Aumento volatilidad (ratio: 6.96x)
+
+Italy:
+  1986: [DOWN] Reduccion volatilidad (ratio: 0.47x)
+  1987: [DOWN] Reduccion volatilidad (ratio: 0.41x)
+  1989: [UP] Aumento volatilidad (ratio: 2.21x)
+  1990: [UP] Aumento volatilidad (ratio: 1.82x)
+  1991: [UP] Aumento volatilidad (ratio: 1.59x)
+  1993: [DOWN] Reduccion volatilidad (ratio: 0.62x)
+  1997: [DOWN] Reduccion volatilidad (ratio: 0.16x)
+  1999: [UP] Aumento volatilidad (ratio: 2.87x)
+  2001: [UP] Aumento volatilidad (ratio: 2.16x)
+  2002: [UP] Aumento volatilidad (ratio: 1.62x)
+  2004: [DOWN] Reduccion volatilidad (ratio: 0.29x)
+  2005: [DOWN] Reduccion volatilidad (ratio: 0.60x)
+  2007: [UP] Aumento volatilidad (ratio: 2.99x)
+  2008: [UP] Aumento volatilidad (ratio: 5.76x)
+
+Japan:
+  1987: [UP] Aumento volatilidad (ratio: 2.77x)
+  1991: [UP] Aumento volatilidad (ratio: 3.61x)
+  1994: [DOWN] Reduccion volatilidad (ratio: 0.53x)
+  2000: [DOWN] Reduccion volatilidad (ratio: 0.64x)
+  2006: [DOWN] Reduccion volatilidad (ratio: 0.18x)
+  2007: [UP] Aumento volatilidad (ratio: 13.08x)
+  2008: [UP] Aumento volatilidad (ratio: 5.39x)
+
+USA:
+  1986: [DOWN] Reduccion volatilidad (ratio: 0.22x)
+  1988: [DOWN] Reduccion volatilidad (ratio: 0.06x)
+  1989: [UP] Aumento volatilidad (ratio: 6.49x)
+  1990: [UP] Aumento volatilidad (ratio: 4.13x)
+  1995: [DOWN] Reduccion volatilidad (ratio: 0.15x)
+  1996: [UP] Aumento volatilidad (ratio: 1.68x)
+  1999: [DOWN] Reduccion volatilidad (ratio: 0.21x)
+  2000: [UP] Aumento volatilidad (ratio: 15.04x)
+  2005: [DOWN] Reduccion volatilidad (ratio: 0.44x)
+  2007: [UP] Aumento volatilidad (ratio: 4.27x)
+  2008: [UP] Aumento volatilidad (ratio: 2.63x)
+
+United Kingdom:
+  1985: [DOWN] Reduccion volatilidad (ratio: 0.25x)
+  1989: [UP] Aumento volatilidad (ratio: 2.31x)
+  1990: [UP] Aumento volatilidad (ratio: 2.02x)
+  1992: [DOWN] Reduccion volatilidad (ratio: 0.35x)
+  1993: [UP] Aumento volatilidad (ratio: 1.54x)
+  1995: [DOWN] Reduccion volatilidad (ratio: 0.39x)
+  2004: [DOWN] Reduccion volatilidad (ratio: 0.23x)
+  2006: [DOWN] Reduccion volatilidad (ratio: 0.65x)
+  2007: [UP] Aumento volatilidad (ratio: 10.53x)
+  2008: [UP] Aumento volatilidad (ratio: 5.92x)
+
+
+================================================================================
+FASE 6: GUARDAR RESULTADOS
+================================================================================
+Traceback (most recent call last):
+  File "C:\Users\agust\Onedrive\Documentos\VSCODE\TrabajoIa\prueba_modular\gdp_analysis.py", line 525, in <module>
+    with open('prueba_modular/analysis_results.json', 'w', encoding='utf-8') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'prueba_modular/analysis_results.json'
