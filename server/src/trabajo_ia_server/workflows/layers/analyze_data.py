@@ -381,31 +381,44 @@ def _compute_convergence(all_series: Dict[str, pd.Series]) -> Dict[str, Any]:
     else:
         result["sigma"] = None
     
-    # Beta convergence: initial level vs growth rate
-    initial_values = []
-    growth_rates = []
+    # Beta convergence: log of initial GDP per capita (constant prices) vs growth rate
+    # CRITICAL: Beta convergence ONLY works with per_capita_constant variant
+    # Using total GDP (constant_2010) would measure size, not development level
     
-    for country, series in all_series.items():
-        if len(series) > 1:
-            initial = series.iloc[0]
-            cagr = _compute_cagr(series)
-            
-            if initial > 0 and cagr is not None:
-                initial_values.append(np.log(initial))  # Log of initial value
-                growth_rates.append(cagr)
-    
-    if len(initial_values) > 2:
-        # Regress growth on initial value
-        slope, intercept, r_value, p_value, std_err = stats.linregress(initial_values, growth_rates)
-        
+    # Check if we're analyzing per_capita_constant variant
+    if "per_capita_constant" not in [s.name for s in all_series.values() if hasattr(s, 'name')]:
+        # Try to infer from series - if not per capita data, skip beta convergence
         result["beta"] = {
-            "coefficient": float(slope),
-            "r_squared": float(r_value ** 2),
-            "p_value": float(p_value),
-            "interpretation": "catch-up growth" if slope < 0 else "no catch-up",  # Changed for format layer
-            "significant": p_value < 0.05  # Changed to boolean
+            "error": "Beta convergence requires per_capita_constant variant",
+            "note": "Use per_capita_constant to measure convergence in living standards"
         }
     else:
-        result["beta"] = None
+        log_initial_gdp_pc = []
+        growth_rates = []
+        
+        for country, series in all_series.items():
+            if len(series) > 1:
+                initial_value = series.iloc[0]
+                cagr = _compute_cagr(series)
+                
+                # Use log of initial GDP per capita (constant prices)
+                if initial_value > 0 and cagr is not None:
+                    log_initial_gdp_pc.append(np.log(initial_value))
+                    growth_rates.append(cagr)
+        
+        if len(log_initial_gdp_pc) > 2:
+            # Regress growth rate on log of initial GDP per capita
+            # Negative coefficient indicates beta convergence (poorer countries grow faster)
+            slope, intercept, r_value, p_value, std_err = stats.linregress(log_initial_gdp_pc, growth_rates)
+            
+            result["beta"] = {
+                "coefficient": float(slope),
+                "r_squared": float(r_value ** 2),
+                "p_value": float(p_value),
+                "interpretation": "catch-up growth" if slope < 0 else "no catch-up",
+                "significant": p_value < 0.05
+            }
+        else:
+            result["beta"] = None
     
     return result
