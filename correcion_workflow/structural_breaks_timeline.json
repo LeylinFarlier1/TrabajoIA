@@ -1,0 +1,628 @@
+{
+  "metadata": {
+    "method": "5-year rolling variance",
+    "threshold_increase": 1.5,
+    "threshold_decrease": 0.6666666666666666,
+    "description": "Variance change \u226550%: ratio >1.5 (increase) or ratio <2/3 (decrease)",
+    "window_size": 5,
+    "total_breaks": 77
+  },
+  "breaks": [
+    {
+      "year": 1986,
+      "country": "canada",
+      "type": "variance_decrease",
+      "ratio": 0.19544425764674941,
+      "variance_current": 1.905632233173917,
+      "variance_previous": 9.75025951705474
+    },
+    {
+      "year": 1987,
+      "country": "canada",
+      "type": "variance_decrease",
+      "ratio": 0.6349270200997976,
+      "variance_current": 1.209937395215238,
+      "variance_previous": 1.905632233173917
+    },
+    {
+      "year": 1989,
+      "country": "canada",
+      "type": "variance_increase",
+      "ratio": 1.8411440134664343,
+      "variance_current": 2.9398354933001576,
+      "variance_previous": 1.5967439112843484
+    },
+    {
+      "year": 1990,
+      "country": "canada",
+      "type": "variance_increase",
+      "ratio": 20.212118644083322,
+      "variance_current": 59.420303784670004,
+      "variance_previous": 2.9398354933001576
+    },
+    {
+      "year": 1991,
+      "country": "canada",
+      "type": "variance_increase",
+      "ratio": 2.7066078477218096,
+      "variance_current": 160.82746053760178,
+      "variance_previous": 59.420303784670004
+    },
+    {
+      "year": 1995,
+      "country": "canada",
+      "type": "variance_decrease",
+      "ratio": 0.46183023029252385,
+      "variance_current": 73.94534619123125,
+      "variance_previous": 160.11369837005728
+    },
+    {
+      "year": 1996,
+      "country": "canada",
+      "type": "variance_decrease",
+      "ratio": 0.02248102354784789,
+      "variance_current": 1.6623670689788341,
+      "variance_previous": 73.94534619123125
+    },
+    {
+      "year": 2003,
+      "country": "canada",
+      "type": "variance_decrease",
+      "ratio": 0.5229336861330651,
+      "variance_current": 1.2126533512075852,
+      "variance_previous": 2.318942885807924
+    },
+    {
+      "year": 2004,
+      "country": "canada",
+      "type": "variance_decrease",
+      "ratio": 0.46276337413367247,
+      "variance_current": 0.5611715564593275,
+      "variance_previous": 1.2126533512075852
+    },
+    {
+      "year": 2005,
+      "country": "canada",
+      "type": "variance_decrease",
+      "ratio": 0.6438102402339763,
+      "variance_current": 0.361287994576554,
+      "variance_previous": 0.5611715564593275
+    },
+    {
+      "year": 2007,
+      "country": "canada",
+      "type": "variance_increase",
+      "ratio": 1.9379435735585282,
+      "variance_current": 0.651008008911563,
+      "variance_previous": 0.33592722605238523
+    },
+    {
+      "year": 2008,
+      "country": "canada",
+      "type": "variance_increase",
+      "ratio": 8.975168583348093,
+      "variance_current": 5.842906629091056,
+      "variance_previous": 0.651008008911563
+    },
+    {
+      "year": 1987,
+      "country": "france",
+      "type": "variance_increase",
+      "ratio": 7.1148593976307515,
+      "variance_current": 0.7991840430907898,
+      "variance_previous": 0.11232604868578544
+    },
+    {
+      "year": 1992,
+      "country": "france",
+      "type": "variance_increase",
+      "ratio": 1.9503013760615198,
+      "variance_current": 2.651471500384191,
+      "variance_previous": 1.3595188584333715
+    },
+    {
+      "year": 1993,
+      "country": "france",
+      "type": "variance_decrease",
+      "ratio": 0.5318712318705134,
+      "variance_current": 1.4102414131788983,
+      "variance_previous": 2.651471500384191
+    },
+    {
+      "year": 1997,
+      "country": "france",
+      "type": "variance_decrease",
+      "ratio": 0.2439213033805577,
+      "variance_current": 0.3152461275262516,
+      "variance_previous": 1.2924091629438996
+    },
+    {
+      "year": 1999,
+      "country": "france",
+      "type": "variance_increase",
+      "ratio": 1.8179014297892775,
+      "variance_current": 0.7509067959981244,
+      "variance_previous": 0.41306243765107
+    },
+    {
+      "year": 2000,
+      "country": "france",
+      "type": "variance_decrease",
+      "ratio": 0.6486591106279515,
+      "variance_current": 0.48708253445662797,
+      "variance_previous": 0.7509067959981244
+    },
+    {
+      "year": 2002,
+      "country": "france",
+      "type": "variance_increase",
+      "ratio": 1.7559873468785325,
+      "variance_current": 1.0547456101025074,
+      "variance_previous": 0.6006567256748392
+    },
+    {
+      "year": 2004,
+      "country": "france",
+      "type": "variance_decrease",
+      "ratio": 0.4446254438983832,
+      "variance_current": 0.4554002402660289,
+      "variance_previous": 1.0242334227955434
+    },
+    {
+      "year": 2007,
+      "country": "france",
+      "type": "variance_increase",
+      "ratio": 2.0531083443492797,
+      "variance_current": 1.0147439873809578,
+      "variance_previous": 0.4942476563274476
+    },
+    {
+      "year": 2008,
+      "country": "france",
+      "type": "variance_increase",
+      "ratio": 3.736495564571362,
+      "variance_current": 3.791586408024407,
+      "variance_previous": 1.0147439873809578
+    },
+    {
+      "year": 1986,
+      "country": "germany",
+      "type": "variance_decrease",
+      "ratio": 0.23288687158165178,
+      "variance_current": 0.4965228192588138,
+      "variance_previous": 2.1320343902886316
+    },
+    {
+      "year": 1992,
+      "country": "germany",
+      "type": "variance_increase",
+      "ratio": 5.677541237703048,
+      "variance_current": 4.016503057548205,
+      "variance_previous": 0.7074370558289689
+    },
+    {
+      "year": 1995,
+      "country": "germany",
+      "type": "variance_decrease",
+      "ratio": 0.6099445981408483,
+      "variance_current": 1.6958882619580038,
+      "variance_previous": 2.7803972149719565
+    },
+    {
+      "year": 1997,
+      "country": "germany",
+      "type": "variance_decrease",
+      "ratio": 0.10941755696062132,
+      "variance_current": 0.19111448078548401,
+      "variance_previous": 1.746652786757658
+    },
+    {
+      "year": 1998,
+      "country": "germany",
+      "type": "variance_decrease",
+      "ratio": 0.22192594527757808,
+      "variance_current": 0.04241326180455207,
+      "variance_previous": 0.19111448078548401
+    },
+    {
+      "year": 1999,
+      "country": "germany",
+      "type": "variance_increase",
+      "ratio": 3.577169445661471,
+      "variance_current": 0.15171942421808438,
+      "variance_previous": 0.04241326180455207
+    },
+    {
+      "year": 2000,
+      "country": "germany",
+      "type": "variance_decrease",
+      "ratio": 0.519172127139699,
+      "variance_current": 0.07876849619971323,
+      "variance_previous": 0.15171942421808438
+    },
+    {
+      "year": 2001,
+      "country": "germany",
+      "type": "variance_increase",
+      "ratio": 8.935511461816443,
+      "variance_current": 0.7038368006225825,
+      "variance_previous": 0.07876849619971323
+    },
+    {
+      "year": 2002,
+      "country": "germany",
+      "type": "variance_increase",
+      "ratio": 2.048613438014168,
+      "variance_current": 1.4418895279243213,
+      "variance_previous": 0.7038368006225825
+    },
+    {
+      "year": 2004,
+      "country": "germany",
+      "type": "variance_decrease",
+      "ratio": 0.632437692632873,
+      "variance_current": 0.8631900970829578,
+      "variance_previous": 1.3648618783131818
+    },
+    {
+      "year": 2005,
+      "country": "germany",
+      "type": "variance_increase",
+      "ratio": 1.9819745670797568,
+      "variance_current": 1.7108208189735286,
+      "variance_previous": 0.8631900970829578
+    },
+    {
+      "year": 2007,
+      "country": "germany",
+      "type": "variance_decrease",
+      "ratio": 0.5490849703257116,
+      "variance_current": 1.2839975341078549,
+      "variance_previous": 2.338431396776715
+    },
+    {
+      "year": 2008,
+      "country": "germany",
+      "type": "variance_increase",
+      "ratio": 8.271543244741279,
+      "variance_current": 10.620641129514286,
+      "variance_previous": 1.2839975341078549
+    },
+    {
+      "year": 1986,
+      "country": "italy",
+      "type": "variance_decrease",
+      "ratio": 0.5223131338964281,
+      "variance_current": 0.4688456474436614,
+      "variance_previous": 0.8976332721065196
+    },
+    {
+      "year": 1990,
+      "country": "italy",
+      "type": "variance_increase",
+      "ratio": 1.7354888974775602,
+      "variance_current": 0.8664670671445434,
+      "variance_previous": 0.4992639644102055
+    },
+    {
+      "year": 1997,
+      "country": "italy",
+      "type": "variance_decrease",
+      "ratio": 0.26782185623294286,
+      "variance_current": 0.43248525064801224,
+      "variance_previous": 1.614824334097104
+    },
+    {
+      "year": 2001,
+      "country": "italy",
+      "type": "variance_increase",
+      "ratio": 2.2219185870887252,
+      "variance_current": 0.9564998274662188,
+      "variance_previous": 0.43048374185459026
+    },
+    {
+      "year": 2002,
+      "country": "italy",
+      "type": "variance_increase",
+      "ratio": 1.5336540817014244,
+      "variance_current": 1.4669398645402745,
+      "variance_previous": 0.9564998274662188
+    },
+    {
+      "year": 2004,
+      "country": "italy",
+      "type": "variance_decrease",
+      "ratio": 0.36142075464787443,
+      "variance_current": 0.5262325286417481,
+      "variance_previous": 1.4560108180683944
+    },
+    {
+      "year": 2007,
+      "country": "italy",
+      "type": "variance_increase",
+      "ratio": 4.582718322076019,
+      "variance_current": 2.149513631262908,
+      "variance_previous": 0.4690477311049648
+    },
+    {
+      "year": 2008,
+      "country": "italy",
+      "type": "variance_increase",
+      "ratio": 3.572951045064237,
+      "variance_current": 7.68010697520063,
+      "variance_previous": 2.149513631262908
+    },
+    {
+      "year": 1990,
+      "country": "japan",
+      "type": "variance_decrease",
+      "ratio": 0.5652238544724395,
+      "variance_current": 0.9055150886247966,
+      "variance_previous": 1.6020468376550971
+    },
+    {
+      "year": 1991,
+      "country": "japan",
+      "type": "variance_increase",
+      "ratio": 3.524219804476371,
+      "variance_current": 3.1912342085836842,
+      "variance_previous": 0.9055150886247966
+    },
+    {
+      "year": 1994,
+      "country": "japan",
+      "type": "variance_decrease",
+      "ratio": 0.3584241175488803,
+      "variance_current": 1.1649940622855732,
+      "variance_previous": 3.250322746841098
+    },
+    {
+      "year": 1995,
+      "country": "japan",
+      "type": "variance_decrease",
+      "ratio": 0.5261756421722608,
+      "variance_current": 0.6129914988499823,
+      "variance_previous": 1.1649940622855732
+    },
+    {
+      "year": 1997,
+      "country": "japan",
+      "type": "variance_increase",
+      "ratio": 4.09238072219186,
+      "variance_current": 2.3362738216316337,
+      "variance_previous": 0.5708837911787289
+    },
+    {
+      "year": 2002,
+      "country": "japan",
+      "type": "variance_decrease",
+      "ratio": 0.5901825916340233,
+      "variance_current": 1.0444786384840035,
+      "variance_previous": 1.769755077987276
+    },
+    {
+      "year": 2006,
+      "country": "japan",
+      "type": "variance_decrease",
+      "ratio": 0.25761865129669337,
+      "variance_current": 0.17132845352413087,
+      "variance_previous": 0.6650467761622426
+    },
+    {
+      "year": 2007,
+      "country": "japan",
+      "type": "variance_increase",
+      "ratio": 9.751099729750452,
+      "variance_current": 1.6706408368577155,
+      "variance_previous": 0.17132845352413087
+    },
+    {
+      "year": 2008,
+      "country": "japan",
+      "type": "variance_increase",
+      "ratio": 5.554660494390728,
+      "variance_current": 9.279842656809416,
+      "variance_previous": 1.6706408368577155
+    },
+    {
+      "year": 1985,
+      "country": "uk",
+      "type": "variance_decrease",
+      "ratio": 0.3415310348047915,
+      "variance_current": 1.0683187804396475,
+      "variance_previous": 3.1280284119721804
+    },
+    {
+      "year": 1986,
+      "country": "uk",
+      "type": "variance_decrease",
+      "ratio": 0.29084418653605254,
+      "variance_current": 0.31071430665815697,
+      "variance_previous": 1.0683187804396475
+    },
+    {
+      "year": 1987,
+      "country": "uk",
+      "type": "variance_increase",
+      "ratio": 1.5215434168159043,
+      "variance_current": 0.4727653078062369,
+      "variance_previous": 0.31071430665815697
+    },
+    {
+      "year": 1988,
+      "country": "uk",
+      "type": "variance_increase",
+      "ratio": 1.7319942585847088,
+      "variance_current": 0.8188267987784349,
+      "variance_previous": 0.4727653078062369
+    },
+    {
+      "year": 1989,
+      "country": "uk",
+      "type": "variance_increase",
+      "ratio": 2.6399468940100865,
+      "variance_current": 2.1616592641673513,
+      "variance_previous": 0.8188267987784349
+    },
+    {
+      "year": 1990,
+      "country": "uk",
+      "type": "variance_increase",
+      "ratio": 2.2982259201064164,
+      "variance_current": 4.96798135134757,
+      "variance_previous": 2.1616592641673513
+    },
+    {
+      "year": 1992,
+      "country": "uk",
+      "type": "variance_decrease",
+      "ratio": 0.4425255523537182,
+      "variance_current": 1.6452097758303459,
+      "variance_previous": 3.7177735095290085
+    },
+    {
+      "year": 1993,
+      "country": "uk",
+      "type": "variance_increase",
+      "ratio": 2.213605793600331,
+      "variance_current": 3.6418458914659557,
+      "variance_previous": 1.6452097758303459
+    },
+    {
+      "year": 1995,
+      "country": "uk",
+      "type": "variance_decrease",
+      "ratio": 0.3946890890978705,
+      "variance_current": 1.4782728567153616,
+      "variance_previous": 3.745411002098405
+    },
+    {
+      "year": 1996,
+      "country": "uk",
+      "type": "variance_decrease",
+      "ratio": 0.3895434521931873,
+      "variance_current": 0.5758515118883869,
+      "variance_previous": 1.4782728567153616
+    },
+    {
+      "year": 1998,
+      "country": "uk",
+      "type": "variance_decrease",
+      "ratio": 0.111367760538167,
+      "variance_current": 0.054819922073751,
+      "variance_previous": 0.4922422953361228
+    },
+    {
+      "year": 1999,
+      "country": "uk",
+      "type": "variance_increase",
+      "ratio": 2.9975040890583875,
+      "variance_current": 0.1643229405779308,
+      "variance_previous": 0.054819922073751
+    },
+    {
+      "year": 2001,
+      "country": "uk",
+      "type": "variance_increase",
+      "ratio": 1.5777807135477389,
+      "variance_current": 0.25115238017741187,
+      "variance_previous": 0.15918078984035747
+    },
+    {
+      "year": 2004,
+      "country": "uk",
+      "type": "variance_decrease",
+      "ratio": 0.22127546741409104,
+      "variance_current": 0.056565736946411135,
+      "variance_previous": 0.2556349224225341
+    },
+    {
+      "year": 2006,
+      "country": "uk",
+      "type": "variance_decrease",
+      "ratio": 0.5194822385893711,
+      "variance_current": 0.03383809674837537,
+      "variance_previous": 0.06513812068004689
+    },
+    {
+      "year": 2007,
+      "country": "uk",
+      "type": "variance_increase",
+      "ratio": 64.71135763418546,
+      "variance_current": 2.1897091803442867,
+      "variance_previous": 0.03383809674837537
+    },
+    {
+      "year": 2008,
+      "country": "uk",
+      "type": "variance_increase",
+      "ratio": 4.91096532225821,
+      "variance_current": 10.753585850501242,
+      "variance_previous": 2.1897091803442867
+    },
+    {
+      "year": 1986,
+      "country": "usa",
+      "type": "variance_decrease",
+      "ratio": 0.29338259834781966,
+      "variance_current": 3.514269939481526,
+      "variance_previous": 11.978453934459958
+    },
+    {
+      "year": 1988,
+      "country": "usa",
+      "type": "variance_decrease",
+      "ratio": 0.06040792226270145,
+      "variance_current": 0.21067192458987094,
+      "variance_previous": 3.487488340911689
+    },
+    {
+      "year": 1989,
+      "country": "usa",
+      "type": "variance_increase",
+      "ratio": 1.9909550050443634,
+      "variance_current": 0.41943832268453224,
+      "variance_previous": 0.21067192458987094
+    },
+    {
+      "year": 1999,
+      "country": "usa",
+      "type": "variance_decrease",
+      "ratio": 0.15843192279370827,
+      "variance_current": 0.12936651877454847,
+      "variance_previous": 0.8165432603061605
+    },
+    {
+      "year": 2000,
+      "country": "usa",
+      "type": "variance_increase",
+      "ratio": 16.410513877053877,
+      "variance_current": 2.1229710515758784,
+      "variance_previous": 0.12936651877454847
+    },
+    {
+      "year": 2005,
+      "country": "usa",
+      "type": "variance_decrease",
+      "ratio": 0.4229250348106549,
+      "variance_current": 0.4975898583473735,
+      "variance_previous": 1.1765438727696655
+    },
+    {
+      "year": 2007,
+      "country": "usa",
+      "type": "variance_increase",
+      "ratio": 3.855479529512779,
+      "variance_current": 2.335185143263267,
+      "variance_previous": 0.6056795595432372
+    },
+    {
+      "year": 2008,
+      "country": "usa",
+      "type": "variance_increase",
+      "ratio": 2.0294193933530607,
+      "variance_current": 4.739070016808419,
+      "variance_previous": 2.335185143263267
+    }
+  ]
+}
