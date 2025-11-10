@@ -6,9 +6,10 @@ Welcome to the Trabajo IA MCP Server documentation. This index will help you nav
 
 New to the project? Start here:
 
-1. **[Main README](../README.md)** - Project overview, installation, and basic usage
-2. **[Architecture Guide](architecture.md)** - System design and architecture
-3. **[Version Update Guide](guides/VERSION_UPDATE_GUIDE.md)** - Step-by-step release checklist
+1. **[Quick Start Guide](../../QUICKSTART.md)** - Installation and setup for Claude Desktop, VSCode, and Claude Code
+2. **[Main README](../README.md)** - Project overview, installation, and basic usage
+3. **[Architecture Guide](architecture.md)** - System design and architecture
+4. **[Version Update Guide](guides/VERSION_UPDATE_GUIDE.md)** - Step-by-step release checklist
 
 ## 📖 Core Documentation
 
@@ -27,7 +28,7 @@ New to the project? Start here:
   - Upgrade guides
 
 - **[RELEASE_NOTES_v0.1.9.md](Release_notes/RELEASE_NOTES_v0.1.9.md)** - Latest release details
-  - What's new in v0.1.9: cache, rate limiting, telemetry, and system health tool
+  - What's new in v0.1.9: cache, rate limiting, telemetry, and internal health diagnostics
   - Usage examples
   - Performance metrics
   - Migration instructions
@@ -97,36 +98,109 @@ How-to guide for adding a new MCP tool:
 
 ## 🔧 API Reference
 
-### Tools Documentation
+### Tools Documentation (12 MCP Tools)
 
-#### 1. search_fred_series
-**Location**: `src/trabajo_ia_server/tools/fred/search_series.py`
+#### FRED Data Tools (11 tools)
 
-Advanced FRED series search with:
-- Full-text search
-- Category filtering
-- Tag-based filtering
-- Pagination support
-- Retry mechanism
+**1. search_fred_series**
+- **Location**: `src/trabajo_ia_server/tools/fred/search_series.py`
+- Advanced search with filters, categories, tags, pagination
+- **See**: [README - search_fred_series](../README.md#1-search_fred_series-new-in-v011)
 
-**See**: [README - search_fred_series](../README.md#1-search_fred_series-new-in-v011)
+**2. get_fred_series_observations**
+- **Location**: `src/trabajo_ia_server/tools/fred/observations.py`
+- Fetch historical time-series data with date ranges
+- **See**: [README - get_fred_series_observations](../README.md#2-fetch_fred_series)
 
-#### 2. fetch_fred_series
-**Location**: `src/trabajo_ia_server/tools/fred/fetch_series.py`
+**3-8. Tag Management Tools**
+- `get_fred_tags` - Discover available tags
+- `search_fred_related_tags` - Find related tags
+- `get_fred_series_by_tags` - Filter series by tags
+- `search_fred_series_tags` - Tags for series searches
+- `search_fred_series_related_tags` - Related tags in searches
+- `get_fred_series_tags` - Tags for specific series
 
-Fetch historical observations:
-- Date range filtering
-- Data validation
-- Metadata inclusion
+**9-11. Category Tools**
+- `get_fred_category` - Category information
+- `get_fred_category_children` - Sub-categories
+- `get_fred_category_series` - Series in a category
 
-**See**: [README - fetch_fred_series](../README.md#2-fetch_fred_series)
+#### Advanced Workflows (1 tool)
 
-#### 3. system_health
-**Location**: `src/trabajo_ia_server/tools/system/health.py`
+**analyze_gdp_cross_country**
+- **Location**: `src/trabajo_ia_server/workflows/analyze_gdp.py`
+- Multi-country GDP analysis with:
+  - 238 countries + presets (G7, G20, BRICS, LATAM, etc.)
+  - Structural breaks detection
+  - Convergence analysis (sigma/beta)
+  - Growth metrics (CAGR, volatility, stability)
+  - Rankings and comparisons
+- **See**: [GDP Workflow Reference](workflows/ANALYZE_GDP_CROSS_COUNTRY_REFERENCE.md)
 
-Telemetry snapshot for cache, rate limiter, and metrics subsystems.
+#### System Tools (1 tool)
 
-**See**: [README - system_health](../README.md#3-system_health)
+**system_health**
+- **Location**: `src/trabajo_ia_server/tools/system/health.py`
+- Cache status, rate limiter state, metrics snapshot
+- **See**: [README - system_health](../README.md#3-system_health)
+
+## 💡 Usage Examples
+
+### Basic FRED Queries
+
+**Search for series:**
+```
+Busca series sobre desempleo en Estados Unidos
+```
+
+**Get historical data:**
+```
+Dame los datos mensuales de la serie UNRATE desde 2020
+```
+
+**Explore categories:**
+```
+¿Qué categorías hay disponibles sobre comercio internacional?
+```
+
+### Advanced GDP Analysis Examples
+
+**G7 Comparative Analysis:**
+```
+Analiza el GDP per capita constante del G7 desde 1980 hasta 2010,
+incluyendo detección de quiebres estructurales y análisis de convergencia
+```
+
+**Latin America Economic Study:**
+```
+Compara la convergencia económica de países LATAM (México, Brasil, Argentina,
+Chile, Colombia) usando GDP per capita PPP desde 1990, con análisis por décadas
+```
+
+**Emerging Markets Growth:**
+```
+Analiza el crecimiento del GDP de BRICS (Brasil, Rusia, India, China, Sudáfrica)
+en comparación con Estados Unidos como benchmark, con valores indexados
+```
+
+**Structural Breaks Detection:**
+```
+Detecta quiebres estructurales en el crecimiento económico de países del G20
+desde 1980, mostrando períodos de crisis y estabilización
+```
+
+**Custom Country Analysis:**
+```
+Analiza GDP per capita constante de España, Italia y Grecia desde 1995,
+detectando el impacto de la crisis europea 2008-2012
+```
+
+### System Monitoring
+
+**Check server health:**
+```
+Muéstrame el estado del servidor MCP y sus métricas de cache
+```
 
 ## 🧪 Testing
 
@@ -197,6 +271,132 @@ server/
 #### Understand project structure
 → See [architecture.md](architecture.md#project-structure)
 
+## 🔌 Integration Guide
+
+### Quick Setup by Platform
+
+For detailed step-by-step instructions, see **[QUICKSTART.md](../../QUICKSTART.md)**
+
+#### Claude Desktop
+1. Edit: `%APPDATA%\Claude\claude_desktop_config.json` (Windows)
+2. Add MCP server configuration
+3. Restart Claude Desktop
+4. Look for 🔌 icon to verify connection
+
+#### VSCode (Claude Dev / Cline)
+1. Install Claude Dev or Cline extension
+2. Open MCP Settings: `Ctrl+Shift+P` → "Claude Dev: Open MCP Settings"
+3. Add server configuration
+4. Reload window: `Ctrl+Shift+P` → "Developer: Reload Window"
+
+#### Claude Code (CLI)
+1. Edit: `~/.claude/claude_config.json`
+2. Add MCP server configuration
+3. Start: `claude`
+4. Verify: `/mcp list`
+
+### Configuration Template
+
+```json
+{
+  "mcpServers": {
+    "fred-economic-data": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "C:\\Users\\agust\\OneDrive\\Documentos\\VSCODE\\trabajoIA\\server",
+        "run",
+        "fred-economic-data"
+      ],
+      "env": {
+        "FRED_API_KEY": "your_api_key_here"
+      }
+    }
+  }
+}
+```
+
+**⚠️ Important**: Replace the path with your absolute path to the `server` directory.
+
+## 🐛 Troubleshooting
+
+### Server Not Connecting
+
+**Claude Desktop:**
+- Open Developer Tools: Menu → View → Developer → Developer Tools
+- Check Console for error messages
+- Verify API key is correct in config
+- Ensure absolute path to server directory is correct
+
+**VSCode:**
+- Check Output panel: View → Output → Select "Claude Dev" or "Cline"
+- Verify extension is installed and enabled
+- Reload window after config changes
+- Test server manually: `cd server && uv run fred-economic-data`
+
+**Claude Code:**
+- Check terminal output for startup errors
+- Run `/mcp list` to see connected servers
+- Verify config file location: `~/.claude/claude_config.json`
+- Test server: `cd server && python -m trabajo_ia_server.server`
+
+### API Key Issues
+
+**Error: "Missing FRED_API_KEY"**
+- Check `.env` file in server directory has `FRED_API_KEY=your_key`
+- OR ensure API key is in MCP config under `env` section
+- Get free key: https://fred.stlouisfed.org/docs/api/api_key.html
+
+**Error: "Invalid API Key"**
+- Verify key is active on FRED website
+- Check for extra spaces or quotes in key
+- Try regenerating key on FRED website
+
+### Rate Limiting
+
+**Error: "Rate limit exceeded"**
+- Server implements automatic rate limiting (120 req/min)
+- Wait 60 seconds and retry
+- Check `system_health` tool for rate limiter status
+
+### Installation Issues
+
+**Error: "command not found: uv"**
+```bash
+pip install uv
+```
+
+**Error: "Module not found"**
+```bash
+cd server
+uv pip install -e .
+# or
+pip install -e .
+```
+
+**Permission denied (Windows)**
+- Run terminal/VSCode as Administrator
+- Check antivirus isn't blocking Python execution
+
+### Testing Your Setup
+
+**1. Manual server test:**
+```bash
+cd server
+python -m trabajo_ia_server.server
+# Should start without errors
+```
+
+**2. Test with simple query:**
+```
+Busca la serie UNRATE
+```
+
+**3. Check system health:**
+```
+@workspace Muéstrame el system_health
+```
+
 ## 🔄 Documentation Standards
 
 All documentation in this project follows:
@@ -241,4 +441,5 @@ When adding documentation:
 
 ---
 
-**Last Updated**: 2025-11-01 (v0.1.1)
+**Last Updated**: 2025-11-10 (v0.1.9)
+**Documentation Version**: 2.0

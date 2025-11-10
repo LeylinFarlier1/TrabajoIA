@@ -15,29 +15,75 @@ Servidor MCP (Model Context Protocol) completamente funcional que proporciona ac
 
 ## 📖 Inicio Rápido
 
-1. **Reinicia VS Code**
-2. **Pregunta a Copilot**: `@workspace ¿Cuál es la tasa de desempleo actual?`
-3. **¡Eso es todo!**
+1. **Configura tu API Key de FRED** (gratis en fred.stlouisfed.org)
+2. **Instala el servidor**: `cd server && uv pip install -e .`
+3. **Configura tu cliente** (Claude Desktop, VSCode, o Claude Code)
+4. **Reinicia tu cliente** completamente
+5. **¡Empieza a preguntar!**: `Busca series sobre desempleo en Estados Unidos`
 
-Ver [QUICKSTART.md](./QUICKSTART.md) para instrucciones detalladas.
+📘 **[Ver Guía Completa de Instalación →](./QUICKSTART.md)**
 
 ## 📁 Estructura del Proyecto
 
 ```
 trabajoIA/
-├── server/                    # Código fuente del servidor MCP
-│   ├── src/                   # Código principal
-│   │   └── trabajo_ia_server/
-│   │       ├── tools/         # Herramientas FRED y sistema
-│   │       ├── utils/         # Utilidades (caché, rate limiter, métricas)
-│   │       └── workflows/     # Workflows complejos
-│   ├── tests/                 # Tests unitarios e integración
-│   ├── docs/                  # Documentación completa
-│   ├── .env                   # Variables de entorno (con tu API key)
-│   └── pyproject.toml         # Configuración del proyecto
-├── mcp-config.json            # Config MCP (copiado a VS Code)
-├── QUICKSTART.md              # Guía de inicio rápido
-└── README.md                  # Este archivo
+├── server/                       # Servidor MCP (Python 3.10+)
+│   ├── src/trabajo_ia_server/
+│   │   ├── server.py             # FastMCP server + tool registration
+│   │   ├── config.py             # Configuración centralizada
+│   │   │
+│   │   ├── tools/                # Herramientas MCP (12 tools)
+│   │   │   ├── fred/             # FRED API tools (11 herramientas)
+│   │   │   ├── system/           # health.py - Internal monitoring (not exposed)
+│   │   │   └── workflows/        # Tool wrappers
+│   │   │
+│   │   ├── workflows/            # Análisis complejos multi-paso
+│   │   │   ├── analyze_gdp.py    # GDP cross-country orchestrator
+│   │   │   ├── layers/           # 3-layer architecture
+│   │   │   │   ├── fetch_data.py      # FRED data retrieval
+│   │   │   │   ├── analyze_data.py    # Economic analysis
+│   │   │   │   └── format_output.py   # Output formatting
+│   │   │   └── utils/            # GDP mappings & validators
+│   │   │
+│   │   └── utils/                # Utilidades compartidas
+│   │       ├── cache.py          # Multi-backend caching
+│   │       ├── rate_limiter.py   # FRED API rate limiting
+│   │       ├── metrics.py        # Prometheus-style telemetry
+│   │       ├── fred_client.py    # Unified FRED client
+│   │       └── logger.py         # Structured logging
+│   │
+│   ├── tests/                    # Suite de pruebas (pytest)
+│   │   ├── unit/                 # Tests unitarios
+│   │   ├── integration/          # Tests de integración
+│   │   └── fixtures/             # Datos de prueba
+│   │
+│   ├── docs/                     # Documentación técnica
+│   │   ├── api/                  # Referencias FRED API
+│   │   ├── workflows/            # Docs de workflows
+│   │   ├── guides/               # Guías de desarrollo
+│   │   ├── Release_notes/        # Notas de versión
+│   │   └── architecture.md       # Arquitectura del sistema
+│   │
+│   ├── .env                      # Variables de entorno (API keys)
+│   └── pyproject.toml            # Dependencias y configuración
+│
+├── prueba_workflow/              # Ejemplo: Análisis GDP G7 1980-2010
+│   ├── *.png                     # 7 visualizaciones generadas
+│   ├── analysis_results.json     # Resultados completos del análisis
+│   ├── gdp_data_raw.csv          # Dataset en formato tidy
+│   └── README.md                 # Documentación del análisis
+│
+├── prueba_modular/               # Ejemplo: Análisis modular paso a paso
+│   ├── gdp_analysis.py           # Script de análisis principal
+│   └── README.md                 # Metodología y hallazgos
+│
+├── correcion_workflow/           # Detección de quiebres estructurales
+│   ├── create_structural_breaks_timeline.py
+│   ├── 6_structural_breaks_50pct.png
+│   └── structural_breaks_timeline.json
+│
+├── mcp.json                      # Configuración MCP para VS Code
+└── README.md                     # Este archivo
 ```
 
 ## 🛠️ Características
@@ -46,22 +92,45 @@ trabajoIA/
 - **Caché Inteligente**: Respuestas rápidas (<400ms) con caché multi-nivel
 - **Rate Limiting**: Gestión automática de límites de FRED API
 - **Telemetría**: Métricas y logging estructurado
-- **9 Herramientas FRED**: Búsqueda, observaciones, categorías, tags, workflows
+- **12 Herramientas MCP**: 11 FRED tools + 1 GDP workflow
+- **GDP Cross-Country Analysis**: Análisis económico completo con:
+  - 238 países/territorios + presets (G7, G20, BRICS, LATAM, etc.)
+  - Detección de quiebres estructurales (rolling variance method)
+  - Análisis de convergencia (sigma/beta)
+  - Métricas de crecimiento (CAGR, volatilidad, estabilidad)
+  - Rankings y comparaciones multi-país
 - **System Health**: Monitoreo del estado del servidor
 
 ## 📊 Herramientas Disponibles
 
+### Herramientas Core FRED
 | Herramienta | Descripción |
 |-------------|-------------|
 | `search_fred_series` | Buscar series económicas con filtros avanzados |
-| `get_series_observations` | Obtener datos históricos de series |
-| `fred_category_series` | Listar series por categoría |
-| `fred_series_tags` | Obtener tags de una serie específica |
-| `fred_tags` | Listar todos los tags disponibles |
-| `fred_related_tags` | Encontrar tags relacionados |
-| `fred_series_by_tags` | Buscar series por tags |
-| `compare_inflation` | Comparar inflación entre regiones |
-| `system_health` | Verificar estado y métricas del servidor |
+| `get_fred_series_observations` | Obtener datos históricos de series |
+| `get_fred_tags` | Listar todos los tags disponibles |
+| `search_fred_related_tags` | Encontrar tags relacionados |
+| `get_fred_series_by_tags` | Buscar series por combinación de tags |
+| `search_fred_series_tags` | Tags para búsquedas de series |
+| `search_fred_series_related_tags` | Tags relacionados en búsquedas |
+| `get_fred_series_tags` | Obtener tags de serie específica |
+
+### Herramientas de Categorías
+| Herramienta | Descripción |
+|-------------|-------------|
+| `get_fred_category` | Información de categoría específica |
+| `get_fred_category_children` | Sub-categorías de una categoría |
+| `get_fred_category_series` | Series en una categoría |
+
+### Workflows Avanzados
+| Herramienta | Descripción |
+|-------------|-------------|
+| `analyze_gdp_cross_country` | Análisis GDP multi-país completo con quiebres estructurales |
+
+### Sistema
+| Herramienta | Descripción |
+|-------------|-------------|
+| `system_health` | Estado del servidor, caché y métricas |
 
 ## 🔧 Configuración Actual
 
@@ -98,12 +167,30 @@ python -m trabajo_ia_server.server
 
 ## 📚 Documentación
 
-- **[Quick Start](./QUICKSTART.md)** - Empieza aquí
-- **[VS Code Integration](./server/docs/VSCODE_INTEGRATION.md)** - Guía de integración completa
-- **[Server README](./server/README.md)** - Documentación del servidor
-- **[Release Notes v0.1.9](./server/docs/Release_notes/RELEASE_NOTES_v0.1.9.md)** - Últimas características
-- **[Architecture](./server/docs/architecture.md)** - Arquitectura del sistema
-- **[API Reference](./server/docs/api/)** - Referencia de APIs FRED
+### Inicio Rápido
+- **[Quick Start Guide](./QUICKSTART.md)** - Instalación paso a paso para Claude Desktop, VSCode y Claude Code
+- **[Server README](./server/README.md)** - Documentación técnica del servidor
+- **[Architecture](./server/docs/architecture.md)** - Entender la arquitectura del sistema
+
+### Referencia Técnica
+- **[GDP Workflow Reference](./server/docs/workflows/ANALYZE_GDP_CROSS_COUNTRY_REFERENCE.md)** - Documentación completa del análisis GDP
+- **[API Reference](./server/docs/api/)** - Referencia detallada de APIs FRED (11 documentos)
+- **[Working Paper](./server/docs/WORKING_PAPER_MCP_ARCHITECTURE.md)** - Diseño arquitectónico MCP
+
+### Versiones y Cambios
+- **[Release Notes v0.1.9](./server/docs/Release_notes/RELEASE_NOTES_v0.1.9.md)** - Cache, telemetría, resilience
+- **[CHANGELOG](./server/docs/Changelog/CHANGELOG.md)** - Historial completo de cambios
+- **[v0.2.0 Expansion Plan](./server/docs/planning/v0.2.0_expansion_plan.md)** - Roadmap futuro
+
+### Guías de Desarrollo
+- **[Testing Guide](./server/docs/guides/MCP_PROJECT_TESTING_GUIDE.md)** - Cómo escribir tests
+- **[New Tool Guide](./server/docs/guides/IMPLEMENTACION_NUEVA_TOOL_GUIA.md)** - Implementar nuevas herramientas
+- **[Version Update Guide](./server/docs/guides/VERSION_UPDATE_GUIDE.md)** - Actualizar versiones
+
+### Ejemplos Prácticos
+- **[prueba_workflow/](./prueba_workflow/)** - Análisis GDP G7 completo con 7 visualizaciones
+- **[prueba_modular/](./prueba_modular/)** - Enfoque modular paso a paso
+- **[correcion_workflow/](./correcion_workflow/)** - Detección de quiebres estructurales
 
 ## 🔍 Ejemplos de Uso
 
@@ -117,10 +204,18 @@ python -m trabajo_ia_server.server
 @workspace Dame los datos mensuales de GDP desde 2020 hasta hoy
 ```
 
-### Análisis Comparativo
+### Análisis GDP Cross-Country
 ```
-@workspace Compara la inflación entre USA, Europa y Japón en los últimos 5 años
+@workspace Analiza el GDP per cápita del G7 desde 1980 hasta 2010
+@workspace Detecta quiebres estructurales en el crecimiento económico de LATAM
+@workspace Compara convergencia económica entre países BRICS desde 2000
 ```
+
+### Análisis de Quiebres Estructurales
+El servidor implementa detección de quiebres estructurales usando **rolling variance method**:
+- Ventana móvil de 5 años sobre tasas de crecimiento
+- Threshold: ratio > 1.5 (aumento 50%+) o < 2/3 (reducción 33%+)
+- Identifica crisis económicas y períodos de estabilización
 
 ### Exploración por Categorías
 ```
@@ -174,7 +269,7 @@ Este proyecto está bajo una licencia de código abierto.
 
 ## 👥 Equipo
 
-Desarrollado por el equipo Trabajo IA.
+Desarrollado por Agustin Ernesto Mealla Cormenzana.
 
 ---
 
