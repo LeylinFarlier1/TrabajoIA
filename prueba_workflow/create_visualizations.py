@@ -9,7 +9,7 @@ plt.style.use('seaborn-v0_8-whitegrid')
 plt.rcParams['figure.figsize'] = (12, 7)
 
 # Load analysis results
-with open('prueba_workflow/analysis_results.json', 'r') as f:
+with open('analysis_results.json', 'r') as f:
     data = json.load(f)
 
 # Extract dataset
