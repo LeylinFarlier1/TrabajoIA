@@ -1,0 +1,1821 @@
+{
+  "tool": "analyze_gdp_cross_country",
+  "analysis": {
+    "countries": {
+      "usa": {
+        "per_capita_constant": {
+          "growth": {
+            "cagr_pct": 1.78,
+            "volatility": 1.98,
+            "stability_index": 0.336
+          },
+          "latest": {
+            "date": "2010-01-01",
+            "value": 52812.68,
+            "unit": "USD per capita (2010)"
+          },
+          "stats": {
+            "observations": 31,
+            "first_date": "1980-01-01",
+            "last_date": "2010-01-01",
+            "mean": 42879.63,
+            "min": 30696.08,
+            "max": 54152.83
+          }
+        }
+      },
+      "canada": {
+        "per_capita_constant": {
+          "growth": {
+            "cagr_pct": 1.34,
+            "volatility": 2.27,
+            "stability_index": 0.306
+          },
+          "structural_breaks": [
+            {
+              "date": "1993-01-01",
+              "type": "variance_decrease",
+              "ratio": 0.49
+            }
+          ],
+          "latest": {
+            "date": "2010-01-01",
+            "value": 41164.34,
+            "unit": "USD per capita (2010)"
+          },
+          "stats": {
+            "observations": 31,
+            "first_date": "1980-01-01",
+            "last_date": "2010-01-01",
+            "mean": 34306.16,
+            "min": 26999.08,
+            "max": 42106.87
+          }
+        }
+      },
+      "uk": {
+        "per_capita_constant": {
+          "growth": {
+            "cagr_pct": 1.98,
+            "volatility": 2.17,
+            "stability_index": 0.315
+          },
+          "latest": {
+            "date": "2010-01-01",
+            "value": 42311.43,
+            "unit": "USD per capita (2010)"
+          },
+          "stats": {
+            "observations": 31,
+            "first_date": "1980-01-01",
+            "last_date": "2010-01-01",
+            "mean": 34085.86,
+            "min": 23332.8,
+            "max": 44524.57
+          }
+        }
+      },
+      "germany": {
+        "per_capita_constant": {
+          "growth": {
+            "cagr_pct": 1.59,
+            "volatility": 1.99,
+            "stability_index": 0.334
+          },
+          "latest": {
+            "date": "2010-01-01",
+            "value": 38517.44,
+            "unit": "USD per capita (2010)"
+          },
+          "stats": {
+            "observations": 31,
+            "first_date": "1980-01-01",
+            "last_date": "2010-01-01",
+            "mean": 31606.14,
+            "min": 23977.27,
+            "max": 38996.14
+          }
+        }
+      },
+      "france": {
+        "per_capita_constant": {
+          "growth": {
+            "cagr_pct": 1.46,
+            "volatility": 1.45,
+            "stability_index": 0.408
+          },
+          "latest": {
+            "date": "2010-01-01",
+            "value": 35578.2,
+            "unit": "USD per capita (2010)"
+          },
+          "stats": {
+            "observations": 31,
+            "first_date": "1980-01-01",
+            "last_date": "2010-01-01",
+            "mean": 29789.3,
+            "min": 23050.93,
+            "max": 36322.17
+          }
+        }
+      },
+      "italy": {
+        "per_capita_constant": {
+          "growth": {
+            "cagr_pct": 1.26,
+            "volatility": 1.94,
+            "stability_index": 0.341
+          },
+          "latest": {
+            "date": "2010-01-01",
+            "value": 31928.55,
+            "unit": "USD per capita (2010)"
+          },
+          "stats": {
+            "observations": 31,
+            "first_date": "1980-01-01",
+            "last_date": "2010-01-01",
+            "mean": 28861.63,
+            "min": 21901.93,
+            "max": 34159.91
+          }
+        }
+      },
+      "japan": {
+        "per_capita_constant": {
+          "growth": {
+            "cagr_pct": 1.79,
+            "volatility": 2.39,
+            "stability_index": 0.295
+          },
+          "latest": {
+            "date": "2010-01-01",
+            "value": 32942.2,
+            "unit": "USD per capita (2010)"
+          },
+          "stats": {
+            "observations": 31,
+            "first_date": "1980-01-01",
+            "last_date": "2010-01-01",
+            "mean": 28526.44,
+            "min": 19334.37,
+            "max": 33990.04
+          }
+        }
+      }
+    },
+    "cross_country": {
+      "per_capita_constant": {
+        "statistics": {
+          "mean": 39322.12,
+          "median": 38517.44,
+          "std": 6593.91,
+          "cv": 0.168,
+          "min": 31928.55,
+          "max": 52812.68
+        },
+        "convergence": {
+          "sigma": {
+            "trend": "diverging",
+            "slope": 0.0011,
+            "r_squared": 0.353,
+            "p_value": 0.0004,
+            "significant": true
+          },
+          "beta": {
+            "coefficient": -0.0141,
+            "r_squared": 0.0,
+            "p_value": 0.9859,
+            "significant": false,
+            "interpretation": "catch-up growth"
+          }
+        }
+      }
+    },
+    "rankings": {
+      "per_capita_constant_level": [
+        {
+          "rank": 1,
+          "country": "usa",
+          "value": 52812.68
+        },
+        {
+          "rank": 2,
+          "country": "uk",
+          "value": 42311.43
+        },
+        {
+          "rank": 3,
+          "country": "canada",
+          "value": 41164.34
+        },
+        {
+          "rank": 4,
+          "country": "germany",
+          "value": 38517.44
+        },
+        {
+          "rank": 5,
+          "country": "france",
+          "value": 35578.2
+        },
+        {
+          "rank": 6,
+          "country": "japan",
+          "value": 32942.2
+        },
+        {
+          "rank": 7,
+          "country": "italy",
+          "value": 31928.55
+        }
+      ],
+      "per_capita_constant_growth": [
+        {
+          "rank": 1,
+          "country": "uk",
+          "value": 1.98
+        },
+        {
+          "rank": 2,
+          "country": "japan",
+          "value": 1.79
+        },
+        {
+          "rank": 3,
+          "country": "usa",
+          "value": 1.78
+        },
+        {
+          "rank": 4,
+          "country": "germany",
+          "value": 1.59
+        },
+        {
+          "rank": 5,
+          "country": "france",
+          "value": 1.46
+        },
+        {
+          "rank": 6,
+          "country": "canada",
+          "value": 1.34
+        },
+        {
+          "rank": 7,
+          "country": "italy",
+          "value": 1.26
+        }
+      ]
+    }
+  },
+  "dataset": [
+    {
+      "date": "1980-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 27622.3734030629,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1980-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 23050.9255953042,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1980-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 23977.2698576818,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1980-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 21901.9268708549,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1980-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 19334.3747441799,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1980-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 23526.2555043517,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1980-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 31081.62163338,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1981-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 28215.530855259,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1981-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 23186.7612665684,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1981-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 24067.4825489522,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1981-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 22060.3287067697,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1981-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 20011.8292508515,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1981-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 23332.8025676938,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1981-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 31559.1293373937,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1982-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 26999.079084851,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1982-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 23666.5121788084,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1982-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 23995.2661838189,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1982-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 22135.1628545397,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1982-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 20525.2958514217,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1982-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 23806.7980916528,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1982-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 30696.0834358718,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1983-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 27418.4916111044,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1983-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 23836.4018927227,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1983-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 24436.5473264161,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1983-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 22385.8416028019,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1983-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 21122.9648423607,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1983-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 24803.4271519669,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1983-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 31810.9216083487,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1984-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 28762.9722015849,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1984-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 24102.0176176027,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1984-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 25213.38204825,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1984-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 23102.8115427941,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1984-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 21912.1518618966,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1984-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 25326.1296660232,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1984-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 33818.8235524677,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1985-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 29851.6432940057,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1985-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 24358.1382748825,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1985-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 25858.0588621429,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1985-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 23742.3854949723,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1985-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 22898.9942415029,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1985-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 26316.7154348235,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1985-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 34918.1302027193,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1986-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 30183.4087940958,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1986-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 24813.0302579158,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1986-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 26437.4177349407,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1986-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 24420.0802858599,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1986-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 23527.7125188746,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1986-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 27082.9819543398,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1986-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 35794.8877745985,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1987-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 31001.1298465676,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1987-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 25308.620924146,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1987-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 26766.9600591944,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1987-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 25196.9881183266,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1987-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 24503.0845657844,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1987-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 28482.8666757154,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1987-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 36701.9453883904,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1988-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 31951.5504658265,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1988-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 26374.1221811161,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1988-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 27651.0362699101,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1988-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 26241.1619056876,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1988-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 26026.8648821365,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1988-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 30048.820666255,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1988-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 37889.3773472194,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1989-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 32116.9233234971,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1989-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 27372.0534763161,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1989-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 28507.1621309974,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1989-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 27109.970559768,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1989-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 27199.9399695936,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1989-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 30743.2275250086,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1989-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 38911.5418949927,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1990-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 31700.5462613508,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1990-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 27992.9751471374,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1990-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 29747.6909354385,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1990-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 27625.1792306413,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1990-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 28422.2131194472,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1990-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 30876.3706404357,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1990-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 39200.0658103964,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1991-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 30654.3331550624,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1991-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 28197.2359540607,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1991-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 31040.2935634693,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1991-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 28030.7653841073,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1991-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 29308.2740881269,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1991-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 30441.4813420211,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1991-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 38637.8398159491,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1992-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 30563.3788132238,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1992-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 28482.5194675509,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1992-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 31425.6476019368,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1992-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 28245.4271054692,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1992-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 29462.6539671073,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1992-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 30481.0348883355,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1992-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 39447.9472847522,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1993-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 31032.7546058282,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1993-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 28257.0962487817,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1993-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 30915.8728850114,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1993-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 27987.4328969281,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1993-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 29232.4397928009,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1993-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 31165.1544491287,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1993-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 40002.4762262205,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1994-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 32074.1562636226,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1994-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 28822.5006495069,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1994-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 31609.1102824496,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1994-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 28583.6255328648,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1994-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 29466.7552451648,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1994-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 32281.4801601039,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1994-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 41106.9881841375,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1995-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 32595.4515150443,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1995-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 29379.6158424052,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1995-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 31990.7949834569,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1995-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 29408.3209572297,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1995-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 30171.1637924153,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1995-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 33011.2945663233,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1995-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 41710.8207239918,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1996-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 32801.3018574024,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1996-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 29683.7786067651,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1996-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 32229.4778712612,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1996-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 29795.6597750915,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1996-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 31046.1701544217,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1996-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 33777.5280810971,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1996-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 42783.8165710653,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1997-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 33867.0079071879,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1997-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 30325.522871824,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1997-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 32779.2802466297,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1997-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 30353.3778243995,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1997-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 31276.1930771989,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1997-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 35349.7906380412,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1997-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 44151.6860411494,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1998-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 34894.6134264056,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1998-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 31256.5073830655,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1998-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 33461.3192177074,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1998-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 30892.1758654455,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1998-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 30795.0888900919,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1998-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 36446.2616767045,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1998-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 45596.4306860229,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1999-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 36391.535343959,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1999-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 32152.7207478734,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1999-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 34152.0032259735,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1999-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 31405.2609007683,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1999-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 30636.2661169604,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1999-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 37435.884438888,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "1999-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 47234.2455275781,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2000-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 37906.8601321366,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2000-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 33255.1379642335,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2000-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 35087.0891588694,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2000-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 32609.66746283,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2000-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 31430.631130325,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2000-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 38921.896573883,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2000-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 48616.2546267835,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2001-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 38200.456120621,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2001-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 33640.6738002565,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2001-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 35601.3628316391,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2001-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 33243.599343976,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2001-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 31476.0520665746,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2001-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 39769.8719792093,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2001-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 48597.4246130164,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2002-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 38921.6673033743,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2002-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 33753.5782979758,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2002-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 35460.4121391449,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2002-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 33267.4474482048,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2002-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 31416.1241772309,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2002-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 40312.9824110757,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2002-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 48967.3661209521,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2003-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 39270.0234577749,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2003-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 33840.6175720101,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2003-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 35252.9745130135,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2003-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 33110.1698494812,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2003-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 31830.217584972,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2003-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 41390.6062127939,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2003-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 49905.5233079503,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2004-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 40108.7587456658,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2004-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 34557.1471111581,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2004-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 35670.4870225493,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2004-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 33348.9744820456,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2004-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 32515.1158024695,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2004-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 42167.3557264259,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2004-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 51348.3473392466,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2005-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 41006.2229523971,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2005-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 34946.0372494703,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2005-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 36006.8578127742,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2005-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 33407.6754716472,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2005-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 33098.5474664881,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2005-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 43023.2277090836,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2005-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 52649.5713058632,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2006-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 41663.5123057295,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2006-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 35645.4162427116,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2006-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 37437.3918784909,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2006-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 33873.0493680093,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2006-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 33531.518563066,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2006-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 43724.8957366594,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2006-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 53596.3152369749,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2007-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 42106.8724378248,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2007-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 36322.1685141004,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2007-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 38570.9146369495,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2007-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 34159.9109244074,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2007-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 33990.0360341367,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2007-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 44524.5706965197,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2007-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 54152.8292653448,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2008-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 42067.5687072607,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2008-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 36257.3658930938,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2008-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 38996.1434106777,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2008-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 33550.6340800063,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2008-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 33557.6454041595,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2008-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 44065.6156693521,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2008-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 53703.9628962873,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2009-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 40376.4153847836,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2009-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 35052.8510772683,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2009-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 36927.1920288238,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2009-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 31587.0638416305,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2009-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 31651.0837739562,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2009-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 41712.8319164411,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2009-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 51863.6183424227,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2010-01-01",
+      "country": "canada",
+      "variant": "per_capita_constant",
+      "value": 41164.3399119626,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2010-01-01",
+      "country": "france",
+      "variant": "per_capita_constant",
+      "value": 35578.1968010183,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2010-01-01",
+      "country": "germany",
+      "variant": "per_capita_constant",
+      "value": 38517.4397880176,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2010-01-01",
+      "country": "italy",
+      "variant": "per_capita_constant",
+      "value": 31928.5543621096,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2010-01-01",
+      "country": "japan",
+      "variant": "per_capita_constant",
+      "value": 32942.2020783835,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2010-01-01",
+      "country": "uk",
+      "variant": "per_capita_constant",
+      "value": 42311.4329830247,
+      "unit": "USD per capita (2010)"
+    },
+    {
+      "date": "2010-01-01",
+      "country": "usa",
+      "variant": "per_capita_constant",
+      "value": 52812.682985453,
+      "unit": "USD per capita (2010)"
+    }
+  ],
+  "metadata": {
+    "period": {
+      "start": "1980-01-01",
+      "end": "2010-12-31",
+      "years": 31.0
+    },
+    "coverage": {
+      "countries": [
+        "usa",
+        "canada",
+        "uk",
+        "germany",
+        "france",
+        "italy",
+        "japan"
+      ],
+      "variants": [
+        "per_capita_constant"
+      ],
+      "series_fetched": 7,
+      "series_missing": 0
+    },
+    "computed_variants": [],
+    "limitations": [],
+    "dataset_rows": 217,
+    "format": "both"
+  },
+  "interpretation": []
+}

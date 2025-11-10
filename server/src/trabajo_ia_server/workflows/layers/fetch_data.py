@@ -79,6 +79,21 @@ def fetch_gdp_data(
             # Check if variant is computed
             if variant in GDP_VARIANT_DEPENDENCIES:
                 dep_info = GDP_VARIANT_DEPENDENCIES[variant]
+                
+                # IMPORTANT: Check if variant has direct fetch fallback
+                if dep_info.get("fallback") == "fetch_direct":
+                    # Try direct fetch first
+                    series_id = get_series_id(country, variant)
+                    if series_id:
+                        # Direct series available - use it
+                        series_to_fetch[f"{country}:{series_id}"] = (country, variant)
+                        logger.debug(f"Using direct fetch for {country}/{variant}: {series_id}")
+                        continue  # Skip computed logic
+                    else:
+                        # Direct not available - fall back to computation
+                        logger.debug(f"Direct fetch not available for {country}/{variant}, will compute")
+                
+                # Compute from sources
                 sources = dep_info["source"]
                 if isinstance(sources, str):
                     sources = [sources]
@@ -243,6 +258,11 @@ def fetch_gdp_data(
         metadata["computed_variants"].append(variant)
         
         for country in countries:
+            # Skip if already fetched directly
+            if country in data and variant in data[country]:
+                logger.debug(f"Skipping computation for {country}/{variant} - already fetched directly")
+                continue
+            
             try:
                 if variant == "growth_rate":
                     # Compute from constant_2010

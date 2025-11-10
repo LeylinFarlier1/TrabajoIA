@@ -1,0 +1,57 @@
+{
+  "analysis_info": {
+    "tool": "analyze_gdp_cross_country",
+    "date": "2025-11-09",
+    "period": "1980-2010",
+    "countries": ["usa", "canada", "uk", "germany", "france", "italy", "japan"],
+    "variant": "per_capita_constant"
+  },
+  "fred_series_ids": {
+    "usa": {
+      "per_capita_constant": "NYGDPPCAPKDUSA",
+      "description": "GDP per capita, constant 2010 USD",
+      "source": "World Bank via FRED"
+    },
+    "canada": {
+      "per_capita_constant": "NYGDPPCAPKDCAN",
+      "description": "GDP per capita, constant 2010 USD",
+      "source": "World Bank via FRED"
+    },
+    "uk": {
+      "per_capita_constant": "NYGDPPCAPKDGBR",
+      "description": "GDP per capita, constant 2010 USD",
+      "source": "World Bank via FRED"
+    },
+    "germany": {
+      "per_capita_constant": "NYGDPPCAPKDDEU",
+      "description": "GDP per capita, constant 2010 USD",
+      "source": "World Bank via FRED"
+    },
+    "france": {
+      "per_capita_constant": "NYGDPPCAPKDFRA",
+      "description": "GDP per capita, constant 2010 USD",
+      "source": "World Bank via FRED"
+    },
+    "italy": {
+      "per_capita_constant": "NYGDPPCAPKDITA",
+      "description": "GDP per capita, constant 2010 USD",
+      "source": "World Bank via FRED"
+    },
+    "japan": {
+      "per_capita_constant": "NYGDPPCAPKDJPN",
+      "description": "GDP per capita, constant 2010 USD",
+      "source": "World Bank via FRED"
+    }
+  },
+  "data_source": {
+    "primary": "Federal Reserve Economic Data (FRED)",
+    "original_source": "World Bank - World Development Indicators",
+    "url": "https://fred.stlouisfed.org/",
+    "methodology": "GDP per capita based on constant 2010 U.S. dollars"
+  },
+  "notes": [
+    "All series use constant 2010 USD for comparability across countries and time",
+    "Data obtained through FRED's MCP (Model Context Protocol) server",
+    "Series IDs follow pattern: NYGDPPCAPKD + 3-letter ISO country code"
+  ]
+}

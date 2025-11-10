@@ -27,7 +27,7 @@ GDP_MAPPINGS: Dict[str, Dict[str, str]] = {
         "nominal_lcu": "GDPA",  # Same as nominal_usd for USA
         "constant_2010": "GDPCA",  # Real GDP, Billions of Chained 2017 Dollars
         "per_capita_nominal": "A939RC0A052NBEA",  # Per capita GDP (BEA)
-        "per_capita_constant": None,  # Computed from GDPCA / population
+        "per_capita_constant": "NYGDPPCAPKDUSA",  # GDP per capita, constant 2010 USD
         "per_capita_ppp": None,  # Not needed for USA
         "ppp_adjusted": None,  # Not needed for USA
         "population": "POPTHM"  # Population (Thousands)

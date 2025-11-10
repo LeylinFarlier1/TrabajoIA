@@ -79,9 +79,28 @@ def validate_variants(
         if variant not in all_variants:
             continue
             
-        # Check if variant is computed
+        # Check if variant is computed or has fallback to direct fetch
         if variant in GDP_VARIANT_DEPENDENCIES:
             dep_info = GDP_VARIANT_DEPENDENCIES[variant]
+            
+            # If variant has "fetch_direct" fallback, try direct fetch first
+            if dep_info.get("fallback") == "fetch_direct":
+                # Check if direct series exists for all countries
+                direct_available = []
+                for country in countries:
+                    if get_series_id(country, variant):
+                        direct_available.append(country)
+                
+                # If at least some countries have direct series, mark as valid
+                if direct_available:
+                    valid.append(variant)
+                    if len(direct_available) < len(countries):
+                        warnings.append(
+                            f"{variant} available directly for {len(direct_available)}/{len(countries)} countries"
+                        )
+                    continue
+            
+            # Otherwise, check computed variant dependencies
             sources = dep_info["source"]
             
             if isinstance(sources, str):
@@ -111,14 +130,9 @@ def validate_variants(
                 )
             else:
                 computable.append(variant)
-                if dep_info.get("fallback") == "fetch_direct":
-                    warnings.append(
-                        f"{variant} will try direct FRED fetch first, compute if unavailable"
-                    )
-                else:
-                    warnings.append(
-                        f"{variant} will be computed from {', '.join(sources)}"
-                    )
+                warnings.append(
+                    f"{variant} will be computed from {', '.join(sources)}"
+                )
         else:
             # Direct variant - check availability
             if check_availability:
